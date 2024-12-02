@@ -1,0 +1,118 @@
+.filter-card{
+  position: relative;
+  border-top-left-radius: 5px;
+  border-top-right-radius: 5px;
+  overflow: hidden;
+}
+.filter-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 3px; /* Border thickness */
+  background: linear-gradient(to right, #00203FFF, #165c51);
+  border-top-left-radius: 5px;
+  border-top-right-radius: 5px;
+}
+
+.app-header{
+  background: linear-gradient(to right, #00203FFF, #165c51);
+}
+.avatar-box{
+  background: #ffffff0f;
+  border: 3px solid #ffffffad;
+}
+.lh-1{
+  text-align: center;
+}
+.welltext{
+  font-size: 16px;
+  font-weight: 700;
+  font-family: sans-serif;
+}
+.icon-box.md{
+  width: 4rem;
+  height: 4rem;
+}
+.total-well-card{
+  border-top: 3px solid #408dff;
+  border-top-left-radius: 5px;
+  border-top-right-radius: 5px;
+}
+.flowing-well-card{
+  border-top: 3px solid #41e345;
+  border-top-left-radius: 5px;
+  border-top-right-radius: 5px;
+}
+.non-flowing-card{
+  border-top: 3px solid #ffc107d4;
+  border-top-left-radius: 5px;
+  border-top-right-radius: 5px;
+}
+.offline-well-card{
+  border-top: 3px solid var(--bs-form-invalid-color);
+  border-top-left-radius: 5px;
+  border-top-right-radius: 5px;
+}
+.cgl-card{
+  border-top: 3px solid #408dff;
+  border-top-left-radius: 5px;
+  border-top-right-radius: 5px;
+}
+.igl-card{
+  border-top: 3px solid #41e345;
+  border-top-left-radius: 5px;
+  border-top-right-radius: 5px;
+}
+.self-flow-card{
+  border-top: 3px solid #ffc107d4;
+  border-top-left-radius: 5px;
+  border-top-right-radius: 5px;
+}
+.anamolies-card{
+  border-top: 3px solid #dc3545;
+  border-top-left-radius: 5px;
+  border-top-right-radius: 5px;
+}
+.accordion-button{
+  background: linear-gradient(to right, #00203FFF, #165c51);
+}
+.name-tilte h5{
+  color: white;
+  font-size: 20px;
+  font-weight: 600;
+}
+.well-count-head-1{
+  background: #c7cacd;
+  font-size: 20px;
+  font-weight: 700;
+  padding: 0px 10px;
+}
+.card-indicator-section .box1{
+  border-radius: 15px;
+  background-color: #008000ed;
+  height: 20px;
+  width: 20px;
+}
+.card-indicator-section{
+  position: relative;
+  display: flex;
+  text-align: center;
+}
+.card-indicator-section .box2{
+  border-radius: 15px;
+  background-color: #e50000;
+  height: 20px;
+  width: 20px;
+}
+.card-indicator-section .box3{
+  border-radius: 15px;
+  background-color: #ffd439;
+  height: 20px;
+  width: 20px;
+}
+.device-pills a{
+  font-weight: 600;
+  font-size: 20px;
+}

@@ -27,133 +27,14 @@
 	************* -->
     <link rel="stylesheet" href="assets/fonts/remix/remixicon.css">
     <link rel="stylesheet" href="assets/css/main.min.css">
+    <link rel="stylesheet" type="text/css" href="assets/customecss/dashboard.css">
+
     <!-- *************
 		************ Vendor Css Files *************
 	************ -->
 
     <!-- Scrollbar CSS -->
     <link rel="stylesheet" href="assets/vendor/overlay-scroll/OverlayScrollbars.min.css">
-
-    <style type="text/css">
-      .filter-card{
-        position: relative;
-        border-top-left-radius: 5px;
-        border-top-right-radius: 5px;
-        overflow: hidden;
-      }
-      .filter-card::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 3px; /* Border thickness */
-        background: linear-gradient(to right, #00203FFF, #165c51);
-        border-top-left-radius: 5px;
-        border-top-right-radius: 5px;
-      }
-
-      .app-header{
-        background: linear-gradient(to right, #00203FFF, #165c51);
-      }
-      .avatar-box{
-        background: #ffffff0f;
-        border: 3px solid #ffffffad;
-      }
-      .lh-1{
-        text-align: center;
-      }
-      .welltext{
-        font-size: 16px;
-        font-weight: 700;
-        font-family: sans-serif;
-      }
-      .icon-box.md{
-        width: 4rem;
-        height: 4rem;
-      }
-      .total-well-card{
-        border-top: 3px solid #408dff;
-        border-top-left-radius: 5px;
-        border-top-right-radius: 5px;
-      }
-      .flowing-well-card{
-        border-top: 3px solid #41e345;
-        border-top-left-radius: 5px;
-        border-top-right-radius: 5px;
-      }
-      .non-flowing-card{
-        border-top: 3px solid #ffc107d4;
-        border-top-left-radius: 5px;
-        border-top-right-radius: 5px;
-      }
-      .offline-well-card{
-        border-top: 3px solid var(--bs-form-invalid-color);
-        border-top-left-radius: 5px;
-        border-top-right-radius: 5px;
-      }
-      .cgl-card{
-        border-top: 3px solid #408dff;
-        border-top-left-radius: 5px;
-        border-top-right-radius: 5px;
-      }
-      .igl-card{
-        border-top: 3px solid #41e345;
-        border-top-left-radius: 5px;
-        border-top-right-radius: 5px;
-      }
-      .self-flow-card{
-        border-top: 3px solid #ffc107d4;
-        border-top-left-radius: 5px;
-        border-top-right-radius: 5px;
-      }
-      .anamolies-card{
-        border-top: 3px solid #dc3545;
-        border-top-left-radius: 5px;
-        border-top-right-radius: 5px;
-      }
-      .accordion-button{
-        background: linear-gradient(to right, #00203FFF, #165c51);
-      }
-      .name-tilte h5{
-        color: white;
-        font-size: 20px;
-        font-weight: 600;
-      }
-      .well-count-head-1{
-        background: #c7cacd;
-        font-size: 20px;
-        font-weight: 700;
-        padding: 0px 10px;
-      }
-      .card-indicator-section .box1{
-        border-radius: 15px;
-        background-color: #008000ed;
-        height: 20px;
-        width: 20px;
-      }
-      .card-indicator-section{
-        position: relative;
-        display: flex;
-        text-align: center;
-      }
-      .card-indicator-section .box2{
-        border-radius: 15px;
-        background-color: #e50000;
-        height: 20px;
-        width: 20px;
-      }
-      .card-indicator-section .box3{
-        border-radius: 15px;
-        background-color: #ffd439;
-        height: 20px;
-        width: 20px;
-      }
-      .device-pills a{
-        font-weight: 600;
-        font-size: 20px;
-      }
-    </style>
   </head>
 
   <body>
@@ -288,21 +169,23 @@
               <div class="col-xl-3 col-sm-6 col-12">
                 <div class="card mb-3">
                   <div class="card-body total-well-card">
-                    <div class="d-flex align-items-center">
-                      <div class="p-2 border border-primary rounded-circle me-3">
-                        <div class="icon-box md bg-primary-subtle rounded-5">
-                          <img height="45" src="assets/images/icons/oil.png" alt="icon-one">
-                        </div>
-                      </div> 
-                      <div class="d-flex flex-column" style="margin-left: 15%;">
-                        <h2 class="lh-1">
-                          <div class="icon-box md rounded-5 bg-primary" style="width: 2.5rem;height: 2.5rem;background: linear-gradient(to right, #00203FFF, #165c51);">
-                            <span style="font-size: 15px;">3</span>
+                    <a href="total_well_list.html">
+                      <div class="d-flex align-items-center">
+                        <div class="p-2 border border-primary rounded-circle me-3">
+                          <div class="icon-box md bg-primary-subtle rounded-5">
+                            <img height="45" src="assets/images/icons/oil.png" alt="icon-one">
                           </div>
-                        </h2>
-                        <p class="m-0 welltext">Total Wells</p>
+                        </div> 
+                        <div class="d-flex flex-column" style="margin-left: 15%;">
+                          <h2 class="lh-1">
+                            <div class="icon-box md rounded-5 bg-primary" style="width: 2.5rem;height: 2.5rem;background: linear-gradient(to right, #00203FFF, #165c51);">
+                              <span style="font-size: 15px;">3</span>
+                            </div>
+                          </h2>
+                          <p class="m-0 welltext">Total Wells</p>
+                        </div>
                       </div>
-                    </div>
+                    </a>
                   </div>
                 </div>
               </div>
@@ -310,7 +193,8 @@
               <div class="col-xl-3 col-sm-6 col-12">
                 <div class="card mb-3">
                   <div class="card-body flowing-well-card">
-                    <div class="d-flex align-items-center">
+                    <a href="flowing_wells_list.html">
+                      <div class="d-flex align-items-center">
                       <div class="p-2 border border-success rounded-circle me-3">
                         <div class="icon-box md bg-success-subtle rounded-5">
                           <img height="45" src="assets/images/icons/02.png" alt="icon-one">
@@ -325,6 +209,7 @@
                         <p class="m-0 welltext">Flowing Wells</p>
                       </div>
                     </div>
+                    </a>
                   </div>
                 </div>
               </div>
@@ -332,21 +217,23 @@
               <div class="col-xl-3 col-sm-6 col-12">
                 <div class="card mb-3">
                   <div class="card-body non-flowing-card">
-                    <div class="d-flex align-items-center">
-                      <div class="p-2 border border-warning rounded-circle me-3">
-                        <div class="icon-box md bg-warning-subtle rounded-5">
-                          <img height="45" src="assets/images/icons/04.png" alt="icon-one">
+                    <a href="non_flowing_wells_list.html">
+                      <div class="d-flex align-items-center">
+                        <div class="p-2 border border-warning rounded-circle me-3">
+                          <div class="icon-box md bg-warning-subtle rounded-5">
+                            <img height="45" src="assets/images/icons/04.png" alt="icon-one">
+                          </div>
+                        </div>
+                        <div class="d-flex flex-column" style="margin-left: 15%;">
+                          <h2 class="lh-1">
+                            <div class="icon-box md rounded-5 bg-primary" style="width: 2.5rem;height: 2.5rem;background: linear-gradient(to right, #00203FFF, #165c51);">
+                              <span style="font-size: 15px;">3</span>
+                            </div>
+                          </h2>
+                          <p class="m-0 welltext">Non-Flowing Wells</p>
                         </div>
                       </div>
-                      <div class="d-flex flex-column" style="margin-left: 15%;">
-                        <h2 class="lh-1">
-                          <div class="icon-box md rounded-5 bg-primary" style="width: 2.5rem;height: 2.5rem;background: linear-gradient(to right, #00203FFF, #165c51);">
-                            <span style="font-size: 15px;">3</span>
-                          </div>
-                        </h2>
-                        <p class="m-0 welltext">Non-Flowing Wells</p>
-                      </div>
-                    </div>
+                    </a>
                   </div>
                 </div>
               </div>
@@ -354,21 +241,23 @@
               <div class="col-xl-3 col-sm-6 col-12">
                 <div class="card mb-3">
                   <div class="card-body offline-well-card">
-                    <div class="d-flex align-items-center">
-                      <div class="p-2 border border-danger rounded-circle me-3">
-                        <div class="icon-box md bg-danger-subtle rounded-5">
-                          <img height="45" src="assets/images/icons/03.png" alt="icon-one">
+                    <a href="offline_wells_list.html">
+                      <div class="d-flex align-items-center">
+                        <div class="p-2 border border-danger rounded-circle me-3">
+                          <div class="icon-box md bg-danger-subtle rounded-5">
+                            <img height="45" src="assets/images/icons/03.png" alt="icon-one">
+                          </div>
+                        </div>
+                        <div class="d-flex flex-column" style="margin-left: 15%;">
+                          <h2 class="lh-1">
+                            <div class="icon-box md rounded-5 bg-primary" style="width: 2.5rem;height: 2.5rem;background: linear-gradient(to right, #00203FFF, #165c51);">
+                              <span style="font-size: 15px;">2</span>
+                            </div>
+                          </h2>
+                          <p class="m-0 welltext">Offline Wells</p>
                         </div>
                       </div>
-                      <div class="d-flex flex-column" style="margin-left: 15%;">
-                        <h2 class="lh-1">
-                          <div class="icon-box md rounded-5 bg-primary" style="width: 2.5rem;height: 2.5rem;background: linear-gradient(to right, #00203FFF, #165c51);">
-                            <span style="font-size: 15px;">2</span>
-                          </div>
-                        </h2>
-                        <p class="m-0 welltext">Offline Wells</p>
-                      </div>
-                    </div>
+                    </a>
                   </div>
                 </div>
               </div>
@@ -376,21 +265,23 @@
               <div class="col-xl-3 col-sm-6 col-12">
                 <div class="card mb-3">
                   <div class="card-body cgl-card">
-                    <div class="d-flex align-items-center">
-                      <div class="p-2 border border-primary rounded-circle me-3">
-                        <div class="icon-box md bg-primary-subtle rounded-5">
-                          <img height="45" src="assets/images/icons/05.png" alt="icon-one">
-                        </div>
-                      </div> 
-                      <div class="d-flex flex-column" style="margin-left: 15%;">
-                        <h2 class="lh-1">
-                          <div class="icon-box md rounded-5 bg-primary" style="width: 2.5rem;height: 2.5rem;background: linear-gradient(to right, #00203FFF, #165c51);">
-                            <span style="font-size: 15px;">2|2</span>
+                    <a href="cgl_well_list.html">
+                      <div class="d-flex align-items-center">
+                        <div class="p-2 border border-primary rounded-circle me-3">
+                          <div class="icon-box md bg-primary-subtle rounded-5">
+                            <img height="45" src="assets/images/icons/05.png" alt="icon-one">
                           </div>
-                        </h2>
-                        <p class="m-0 welltext">CGL</p>
+                        </div> 
+                        <div class="d-flex flex-column" style="margin-left: 15%;">
+                          <h2 class="lh-1">
+                            <div class="icon-box md rounded-5 bg-primary" style="width: 2.5rem;height: 2.5rem;background: linear-gradient(to right, #00203FFF, #165c51);">
+                              <span style="font-size: 15px;">2|2</span>
+                            </div>
+                          </h2>
+                          <p class="m-0 welltext">CGL</p>
+                        </div>
                       </div>
-                    </div>
+                    </a>
                   </div>
                 </div>
               </div>
@@ -398,21 +289,23 @@
               <div class="col-xl-3 col-sm-6 col-12">
                 <div class="card mb-3">
                   <div class="card-body igl-card">
-                    <div class="d-flex align-items-center">
-                      <div class="p-2 border border-success rounded-circle me-3">
-                        <div class="icon-box md bg-success-subtle rounded-5">
-                          <img height="45" src="assets/images/icons/06.png" alt="icon-one">
+                    <a href="igl_wells_list.html">
+                      <div class="d-flex align-items-center">
+                        <div class="p-2 border border-success rounded-circle me-3">
+                          <div class="icon-box md bg-success-subtle rounded-5">
+                            <img height="45" src="assets/images/icons/06.png" alt="icon-one">
+                          </div>
+                        </div>
+                        <div class="d-flex flex-column" style="margin-left: 15%;">
+                          <h2 class="lh-1">
+                            <div class="icon-box md rounded-5 bg-primary" style="width: 2.5rem;height: 2.5rem;background: linear-gradient(to right, #00203FFF, #165c51);">
+                              <span style="font-size: 15px;">1|2</span>
+                            </div>
+                          </h2>
+                          <p class="m-0 welltext">IGL</p>
                         </div>
                       </div>
-                      <div class="d-flex flex-column" style="margin-left: 15%;">
-                        <h2 class="lh-1">
-                          <div class="icon-box md rounded-5 bg-primary" style="width: 2.5rem;height: 2.5rem;background: linear-gradient(to right, #00203FFF, #165c51);">
-                            <span style="font-size: 15px;">1|2</span>
-                          </div>
-                        </h2>
-                        <p class="m-0 welltext">IGL</p>
-                      </div>
-                    </div>
+                    </a>
                   </div>
                 </div>
               </div>
@@ -420,21 +313,23 @@
               <div class="col-xl-3 col-sm-6 col-12">
                 <div class="card mb-3">
                   <div class="card-body self-flow-card">
-                    <div class="d-flex align-items-center">
-                      <div class="p-2 border border-warning rounded-circle me-3">
-                        <div class="icon-box md bg-warning-subtle rounded-5">
-                          <img height="45" src="assets/images/icons/09.png" alt="icon-one">
+                    <a href="self_flow_list.html">
+                      <div class="d-flex align-items-center">
+                        <div class="p-2 border border-warning rounded-circle me-3">
+                          <div class="icon-box md bg-warning-subtle rounded-5">
+                            <img height="45" src="assets/images/icons/09.png" alt="icon-one">
+                          </div>
+                        </div>
+                        <div class="d-flex flex-column" style="margin-left: 15%;">
+                          <h2 class="lh-1">
+                            <div class="icon-box md rounded-5 bg-primary" style="width: 2.5rem;height: 2.5rem;background: linear-gradient(to right, #00203FFF, #165c51);">
+                              <span style="font-size: 15px;">2|3</span>
+                            </div>
+                          </h2>
+                          <p class="m-0 welltext">Self-flow Wells</p>
                         </div>
                       </div>
-                      <div class="d-flex flex-column" style="margin-left: 15%;">
-                        <h2 class="lh-1">
-                          <div class="icon-box md rounded-5 bg-primary" style="width: 2.5rem;height: 2.5rem;background: linear-gradient(to right, #00203FFF, #165c51);">
-                            <span style="font-size: 15px;">2|3</span>
-                          </div>
-                        </h2>
-                        <p class="m-0 welltext">Self-flow Wells</p>
-                      </div>
-                    </div>
+                    </a>
                   </div>
                 </div>
               </div>
