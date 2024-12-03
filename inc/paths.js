@@ -1,0 +1,1 @@
+const api_path = 'http://localhost/ongc_ank/api/';

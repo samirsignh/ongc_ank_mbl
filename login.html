@@ -20,13 +20,26 @@
     <meta property="og:site_name" content="Bootstrap Gallery">
     <link rel="shortcut icon" href="assets/images/icons/logo.png">
 
+    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
+
     <!-- *************
 			************ CSS Files *************
 		************* -->
     <link rel="stylesheet" href="assets/fonts/remix/remixicon.css">
     <link rel="stylesheet" href="assets/css/main.min.css">
     <link rel="stylesheet" type="text/css" href="assets/customecss/login_style.css">
-
+    <style type="text/css">
+      #toast-container{
+        padding-right: 130px ;
+        padding-top: 30px ;;
+      }
+      .toast.toast-success{
+        background-color: green;
+      }
+      .toast.toast-error{
+        background-color: red;
+      }
+    </style>
   </head>
 
   <body class="login-bg">
@@ -47,11 +60,11 @@
             <form class="login">
                 <div class="login__field">
                     <i class="login__icon fas fa-user"></i>
-                    <input type="text" class="login__input" placeholder="User name / Id" />
+                    <input type="text" class="login__input" name="mobile_no" id="mobile_no" placeholder="User name / Id" />
                 </div>
                 <div class="login__field">
                     <i class="login__icon fas fa-lock"></i>
-                    <input type="password" class="login__input" placeholder="Password" />
+                    <input type="password" class="login__input" name="auth_password" id="auth_password" placeholder="Password" />
                 </div>
                 <button class="button login__submit" onclick="authenticateUser()" type="button">
                     <span class="button__text">Login</span>
@@ -68,17 +81,65 @@
   </div>
 
   <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+
+  <script type="text/javascript" src="inc/paths.js"></script>
+
+  <script type="text/javascript">
+      toastr.options = {
+        "closeButton": true,
+        "newestOnTop": false,
+        "progressBar": true,
+        "positionClass": "toast-top-center",
+        "preventDuplicates": false,
+        "onclick": null,
+        "showDuration": "1000",
+        "hideDuration": "2000",
+        "timeOut": "1500",
+        "extendedTimeOut": "2000",
+        "showEasing": "swing",
+        "hideEasing": "linear",
+        "showMethod": "fadeIn",
+        "hideMethod": "fadeOut"
+      }
+  </script>
 
   <script type="text/javascript">
     const authenticateUser = ()=>{
-        $.ajax({
-            url: "",
-            type: "POST",
-            data: {},
-            success:(resp)=>{
-              window.location.href="main_dashboard.html";
+
+      let mobile_no = $("#mobile_no").val();
+      let auth_password = $("#auth_password").val();
+
+      $.ajax({
+          url: api_path + 'Member_Entry/Entry_Get',
+          type: "POST",
+          data: {mobile_no: mobile_no,auth_password: auth_password},
+          headers: { 
+              "x-api-key": "Qm0Lkq9m8JRiGPxO56HNmD7pIVSGzJje"
+          },
+          success:(resp)=>{
+            console.log(resp);
+            if(resp.response_code == 200){
+              if(resp.data['user_type'] == 2){
+                localStorage.setItem('userData',JSON.stringify(resp.data));
+                setTimeout(()=>{
+                    window.location.href="main_dashboard.html";
+                },1000);
+                toastr.success("Login Successfull");
+              }else if(resp.data['user_type'] == 3){
+                localStorage.setItem('userData',JSON.stringify(resp.data));
+                setTimeout(()=>{
+                    window.location.href="main_dashboard.html";
+                },1000);
+                toastr.success("Login Successful");
+              }else{
+                toastr.error(resp.msg);
+              }
+            }else{
+              toastr.error(resp.msg);
             }
-        });
+          }
+      });
     }
   </script>
 

@@ -22,12 +22,27 @@
 
     <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.1/css/all.min.css">
 
+    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
+
     <!-- *************
 		************ CSS Files *************
 	************* -->
     <link rel="stylesheet" href="assets/fonts/remix/remixicon.css">
     <link rel="stylesheet" href="assets/css/main.min.css">
     <link rel="stylesheet" type="text/css" href="assets/customecss/dashboard.css">
+
+    <style type="text/css">
+      #toast-container{
+        padding-right: 130px ;
+        padding-top: 30px ;;
+      }
+      .toast.toast-success{
+        background-color: green;
+      }
+      .toast.toast-error{
+        background-color: red;
+      }
+    </style>
 
     <!-- *************
 		************ Vendor Css Files *************
@@ -75,10 +90,10 @@
             </a>
             <div class="dropdown-menu dropdown-menu-end shadow-lg">
               <div class="px-3 py-2">
-                <h6 class="m-0">James Bruton</h6>
+                <h6 class="m-0" id="logedin_user"></h6>
               </div>
               <div class="mx-3 my-2 d-grid">
-                <a href="login.html" class="btn btn-danger">Logout</a>
+                <a href="javascript:;" onclick="logoutSession()" class="btn btn-danger">Logout</a>
               </div>
             </div>
           </div>
@@ -130,33 +145,27 @@
                   <div class="card-body filter-card">
                     <div class="m-0">
                       <label class="form-label" for="abc4"><strong>Area</strong></label>
-                      <select class="form-select" id="area_id" name="area_id" aria-label="Default select example">
-                        <option selected="">select</option>
-                        <option value="1">One</option>
+                      <select class="form-select" onchange="getSiteList()" id="area_id" name="area_id" aria-label="Default select example">
+                        
                       </select>
                     </div>
 
                     <div class="m-0 pt-2">
                       <label class="form-label" for="abc4"><strong>Installation/Site</strong></label>
-                      <select class="form-select" id="site_id" name="site_id" aria-label="Default select example">
-                        <option selected="">select</option>
-                        <option value="1">One</option>
+                      <select class="form-select" onchange="getWellNames();" id="site_id" name="site_id" aria-label="Default select example">
+                        
                       </select>
                     </div>
 
                     <div class="m-0 pt-2">
                       <label class="form-label" for="abc4"><strong>Well Type</strong></label>
                       <select class="form-select" id="well_type" name="well_type" aria-label="Default select example">
-                        <option selected="">select</option>
-                        <option value="1">One</option>
                       </select>
                     </div>
 
                     <div class="m-0 pt-2">
                       <label class="form-label" for="abc4"><strong>Well Name</strong></label>
                       <select class="form-select" id="well_id" name="well_id" aria-label="Default select example">
-                        <option selected="">select</option>
-                        <option value="1">One</option>
                       </select>
                     </div>
 
@@ -464,16 +473,37 @@
     <!-- *************
 			************ Vendor Js Files *************
 		************* -->
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>  
 
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyA-_rv9bXIPPVsYV0TQ5NxUMg96WdP9_LM"></script>
 
     <!-- Overlay Scroll JS -->
     <script src="assets/vendor/overlay-scroll/jquery.overlayScrollbars.min.js"></script>
     <script src="assets/vendor/overlay-scroll/custom-scrollbar.js"></script>
+    <script type="text/javascript" src="inc/paths.js"></script>
 
     <!-- Custom JS files -->
     <script src="assets/js/custom.js"></script>
     <!-- <script src="inc/sidebarmenu.html"></script> -->
+
+    <script type="text/javascript">
+      toastr.options = {
+        "closeButton": true,
+        "newestOnTop": false,
+        "progressBar": true,
+        "positionClass": "toast-top-center",
+        "preventDuplicates": false,
+        "onclick": null,
+        "showDuration": "1000",
+        "hideDuration": "2000",
+        "timeOut": "1500",
+        "extendedTimeOut": "2000",
+        "showEasing": "swing",
+        "hideEasing": "linear",
+        "showMethod": "fadeIn",
+        "hideMethod": "fadeOut"
+      }
+    </script>
 
     <script type="text/javascript">
       $(document).ready(function () {
@@ -482,6 +512,111 @@
     </script>
 
     <script>
+
+      let sessionUserData = localStorage.getItem('userData');
+      let userData = JSON.parse(sessionUserData);
+      // console.log(userData);
+      $(document).ready(function() {
+        let company_id = userData.company_id;
+        let assets_id = userData.assets_id;
+        // area list section
+        $.ajax({
+            url: api_path + "Area_master/AreaList",
+            type: "POST",
+            data:{company_id:company_id, assets_id:assets_id},
+            headers: { 
+                "x-api-key": "Qm0Lkq9m8JRiGPxO56HNmD7pIVSGzJje"
+            },
+            success:(resp)=>{
+              if(resp.response_code == 200){
+                $("#area_id").html(`<option value="">-select-</option>`);
+                $.each(resp.data, (i,v)=>{
+                    $("#area_id").append(`<option value="${v.id}">${v.area_name}</option>`);
+                });
+              }
+            }
+        });
+
+        // well type list section 
+        $.ajax({
+            url: api_path + "Master/get_well_type_List",
+            type: "POST",
+            data:{company_id:company_id},
+            headers: { 
+                "x-api-key": "Qm0Lkq9m8JRiGPxO56HNmD7pIVSGzJje"
+            },
+            success:(resp)=>{
+              if(resp.response_code == 200){
+                $("#well_type").html(`<option value="">-select-</option>`);
+                $.each(resp.data, (i,v)=>{
+                    $("#well_type").append(`<option value="${v.id}">${v.well_type_name}</option>`);
+                });
+              }
+            }
+        });
+
+      });
+
+      const getSiteList = ()=>{
+        let company_id = userData.company_id;
+        let assets_id = userData.assets_id;
+        let area_id = $("#area_id").val();
+
+        $.ajax({
+            url: api_path + "Well_site_master/Well_SiteList",
+            type: "POST",
+            data: {company_id:company_id,assets_id:assets_id,area_id:area_id},
+            headers: { 
+                "x-api-key": "Qm0Lkq9m8JRiGPxO56HNmD7pIVSGzJje"
+            },
+            success:(resp)=>{
+              if(resp.response_code == 200){
+                $("#site_id").html(`<option value="">-select-</option>`);
+                $.each(resp.data, (i,v)=>{
+                    $("#site_id").append(`<option value="${v.id}">${v.well_site_name}</option>`);
+                });
+              }
+            }
+        });
+      }
+
+      const getWellNames = ()=>{
+        let company_id = userData.company_id;
+        let assets_id = userData.assets_id;
+        let area_id = $("#area_id").val();
+        let site_id = $("#site_id").val();
+
+        $.ajax({
+            url: api_path + "Well_master/Well_List",
+            type: "POST",
+            data: {company_id:company_id,assets_id:assets_id,area_id:area_id,site_id:site_id},
+            headers: { 
+                "x-api-key": "Qm0Lkq9m8JRiGPxO56HNmD7pIVSGzJje"
+            },
+            success:(resp)=>{
+              if(resp.response_code == 200){
+                $("#well_id").html(`<option value="">-select-</option>`);
+                $.each(resp.data, (i,v)=>{
+                    $("#well_id").append(`<option value="${v.id}">${v.well_name}</option>`);
+                });
+              }
+            }
+        });
+
+      }
+
+      $(document).ready(function() {
+        let sessionUserData = localStorage.getItem('userData');
+        let userData = JSON.parse(sessionUserData);
+        // console.log(userData);
+        $("#logedin_user").html(userData.company_name);
+      });
+
+      const logoutSession = ()=>{
+        localStorage.clear()
+        window.location.href = 'login.html';
+      }
+
       // Initialize and add the map
       function initMap() {
         // The location to center the map (example: New York)
