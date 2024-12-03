@@ -1,0 +1,120 @@
+.pump-motor-image{
+	width: 100%;
+}
+
+.sensor_one{
+    position: absolute;
+    left: 55px;
+    top: -10px;
+}
+.sensor_one_data{
+    position: relative;
+    border: 1px solid #808080e3;
+    padding: 0px 2px;
+    left: 35px;
+    bottom: 30px;
+    font-size: 12px;
+}
+
+.sensor-two{
+    position: absolute;
+	left: 133px;
+    top: 48px;
+}
+.sensor_two_data{
+    position: relative;
+    border: 1px solid #808080e3;
+    padding: 0px 2px;
+    left: 35px;
+    bottom: 45px;
+    font-size: 12px;
+}
+
+.sensor-two_one{
+    position: absolute;
+    top: 100px;
+    left: 230px;
+}
+.sensor_two_data_two{
+    position: relative;
+    bottom: 60px;
+    border: 1px solid grey;
+    padding: 0px 5px;
+    left: 25px;
+}
+
+.sensor-three{
+    position: absolute;
+    top: 186px;
+    left: 145px;
+}
+.sensor_three_data{
+    position: relative;
+    border: 1px solid #808080e3;
+    padding: 0px 2px;
+    left: 30px;
+    bottom: 50px;
+    font-size: 12px;
+}
+
+.sensor-four{
+    position: absolute;
+    top: 185px;
+    left: 240px;
+}
+.sensor_four_data{
+    border: 1px solid grey;
+    position: relative;
+    padding: 0px 2px;
+    left: 30px;
+    bottom: 50px;
+    font-size: 12px;
+}
+
+.well-status-badge{
+	position: absolute;
+    bottom: 15px;
+    right: 35px;
+}
+
+.projectbox{
+	margin-top: 10px !important;
+}
+.battery {
+  padding: 0px 10px;
+  width: 85%;
+  border: solid thin black;
+  position: relative;
+}
+
+.battery:after {
+  content: " ";
+  top: 14px;
+  right: -7px;
+  height: 20px;
+  width: 7px;
+  position: absolute;
+  background: black;
+}
+
+.bar {
+  cursor: pointer;
+  display: inline-block;
+  width: 0;
+  border: solid thin rgb(36 34 34 / 52%);
+  padding: 10px;
+  height: 35px;
+  background: #00000099;
+  transition: background 1s;
+  margin-top: 5px;
+}
+
+.bar.active {
+  background: limegreen;
+}
+
+.single-well-action-buttons{
+	position: relative;
+    display: flex;
+    gap: 5px;
+}
