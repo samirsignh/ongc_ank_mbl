@@ -35,6 +35,28 @@
     <link rel="stylesheet" type="text/css" href="assets/customecss/single_dashboard.css">
     <!-- Scrollbar CSS -->
     <link rel="stylesheet" href="assets/vendor/overlay-scroll/OverlayScrollbars.min.css">
+    <link href="assets/local/select2/css/select2.min.css" rel="stylesheet" type="text/css" />
+    <style type="text/css">
+      .select2-selection.select2-selection--single{
+        height: 40px !important;
+      }
+      .select2-selection__rendered{
+        margin-top: 6px;
+      }
+      .select2-container--default .select2-selection--single .select2-selection__arrow{
+        top: 8px;
+        right: 8px;
+      }
+      .breadcrumb-item+.breadcrumb-item{
+        padding-left: 0px !important;
+      }
+      .well-count-head-1 {
+          background: #c7cacd;
+          font-size: 20px;
+          font-weight: 700;
+          padding: 0px 10px;
+      }
+    </style>
   </head>
 
   <body>
@@ -129,18 +151,21 @@
                 <!-- Breadcrumb starts -->
                 <ol class="breadcrumb">
                   <li class="breadcrumb-item">
-                    Area-1
+                    <span id="areaName"></span>
                   </li>
                   <li class="breadcrumb-item text-primary" aria-current="page">
-                    GGS-6
+                    <span id="siteName"></span>
                   </li>
                   <li class="breadcrumb-item text-primary" aria-current="page">
-                    CGL
+                    <span id="wellTypeName"></span>
                   </li>
                   <li class="breadcrumb-item text-primary" aria-current="page">
-                    A-239
+                    <span id="wellName"></span>
                   </li>
                 </ol>
+                <div class="back-btns">
+                    <a href="main_dashboard.html" class="btn btn-primary btn-sm" style="margin-left: 35px;">Back</a>
+                </div>
                 <!-- Breadcrumb ends -->
               </div>
             <!-- Row starts -->
@@ -150,33 +175,25 @@
                   <div class="card-body filter-card">
                     <div class="m-0">
                       <label class="form-label" for="abc4"><strong>Area</strong></label>
-                      <select class="form-select" id="area_id" name="area_id" aria-label="Default select example">
-                        <option selected="">select</option>
-                        <option value="1">One</option>
+                      <select class="form-control select2" onchange="getSiteList();initMap_mbl();" id="area_id" name="area_id" aria-label="Default select example">
                       </select>
                     </div>
 
                     <div class="m-0 pt-2">
                       <label class="form-label" for="abc4"><strong>Installation/Site</strong></label>
-                      <select class="form-select" id="site_id" name="site_id" aria-label="Default select example">
-                        <option selected="">select</option>
-                        <option value="1">One</option>
+                      <select class="form-control select2" id="site_id" onchange="getWellNames();" name="site_id" aria-label="Default select example">
                       </select>
                     </div>
 
                     <div class="m-0 pt-2">
                       <label class="form-label" for="abc4"><strong>Well Type</strong></label>
-                      <select class="form-select" id="well_type" name="well_type" aria-label="Default select example">
-                        <option selected="">select</option>
-                        <option value="1">One</option>
+                      <select class="form-control select2" id="well_type" onchange="initMap_mbl();" name="well_type" aria-label="Default select example">
                       </select>
                     </div>
 
                     <div class="m-0 pt-2">
                       <label class="form-label" for="abc4"><strong>Well Name</strong></label>
-                      <select class="form-select" id="well_id" name="well_id" aria-label="Default select example">
-                        <option selected="">select</option>
-                        <option value="1">One</option>
+                      <select class="form-control select2" id="well_id" name="well_id" onchange="initMap_mbl();alert_log_mbl();Get_Graph();getPresureDetails();" aria-label="Default select example">
                       </select>
                     </div>
 
@@ -221,7 +238,7 @@
                           </div>
                       </div>
                       <div class="well-status-badge">
-                        <strong>Well Status :</strong> <span class="badge rounded-pill bg-danger">Offline</span>
+                        <strong>Well Status :</strong> <span class="badge rounded-pill bg-dark" id="well_status" style="letter-spacing: 1px;text-transform: uppercase;"></span>
                       </div>
                       <img class="pump-motor-image" src="assets/images/icons/11.jpg" alt="pump-img">
                     </div>
@@ -335,8 +352,8 @@
                         </tbody>
                       </table>
                       <div class="single-well-action-buttons pt-2">
-                        <a href="#" data-bs-toggle="offcanvas" data-bs-target="#update_ietcc" aria-controls="update_ietcc" class="btn btn-outline-primary"> Update IETCC </a>
-                        <a href="#" data-bs-toggle="offcanvas" data-bs-target="#flag_well" aria-controls="flag_well" class="btn btn-outline-primary"> Flag Well </a>
+                        <!-- <a href="#" data-bs-toggle="offcanvas" data-bs-target="#update_ietcc" aria-controls="update_ietcc" class="btn btn-outline-primary"> Update IETCC </a>
+                        <a href="#" data-bs-toggle="offcanvas" data-bs-target="#flag_well" aria-controls="flag_well" class="btn btn-outline-primary"> Flag Well </a> -->
                         <a href="historical_log.html" class="btn btn-outline-primary"> Historical Log </a>
                         <a href="alert_log_report.html" class="btn btn-outline-primary"> Alert Log </a>
                       </div>
@@ -361,7 +378,7 @@
                         </div>
                       </button>
                     </h2>
-                    <div id="singlewell_details_accordians" class="accordion-collapse collapse"
+                  <div id="singlewell_details_accordians" class="accordion-collapse collapse"
                       aria-labelledby="singlewelldetailsaccordians" data-bs-parent="#single_well_detailsAccordian">
                       <div class="accordion-body">
                         <div class="card-indicator-section">
@@ -369,23 +386,30 @@
                               <div class="col-lg-12">
                                 <div class="form-group">
                                   <label style="float: left;"><strong>From Date/Time</strong></label>
-                                  <input type="datetime-local" name="from_date" id="from_date" class="form-control">
+                                  <input type="datetime-local" onchange="Get_Graph()" name="from_date" id="from_date" class="form-control">
                                 </div>
                               </div>
                               <div class="col-lg-12 pt-2">
                                 <div class="form-group">
                                   <label style="float: left;"><strong>To Date/Time</strong></label>
-                                  <input type="datetime-local" name="to_date" id="to_date" class="form-control">
+                                  <input type="datetime-local" onchange="Get_Graph()" name="to_date" id="to_date" class="form-control">
                                 </div>
                               </div>
+                              <!-- <div class="col-md-2 pt-2">
+                                <button class="btn btn-primary" onclick="Get_Graph()">Generate</button>
+                              </div>
+                              <div class="col-md-6 pt-2 pb-2" style="padding-left: 45%;margin-top: -38px;">
+                                <button onclick="graph_date_time();" type="button" class="btn btn-primary btn-sm rounded-5">
+                                  <i class="fa-solid fa-arrows-rotate"></i>
+                                </button>
+                              </div> -->
                             </div>
                         </div>
 
-                        <div class="d-flex gap-2 device-pills a pt-3">
-                          graph goes here
-                        </div>
+                        <div id="neutral_voltage" style="height: 400px; width: 100%;"></div>
                       </div>
-                    </div>
+                    </div> 
+
                   </div>
                 </div>
               </div>
@@ -401,7 +425,7 @@
                         aria-controls="alert_log_details_accordians">
                         <div class="name-tilte">
                           <h5 class="m-0">
-                            Alert Log
+                            Alert Log <span class="btn btn-sm well-count-head-1" id="alert_count"></span>
                           </h5>
                         </div>
                       </button>
@@ -420,13 +444,8 @@
                                 <th style="background-color: #dae4ed;">Alert Date/Time</th>
                               </tr>
                             </thead>
-                            <tbody>
-                              <tr>
-                                <td>1</td>
-                                <td>sadsd</td>
-                                <td>Oflline</td>
-                                <td>3438</td>
-                              </tr>
+                            <tbody id="alert_log_table">
+                              
                             </tbody>
                           </table>
                         </div>
@@ -464,7 +483,6 @@
                 </div>
               </div>
             </div>
-
             <!-- Row ends -->
 
           </div>
@@ -482,19 +500,19 @@
                     <div class="col-md-12">
                       <div class="form-group">
                         <label><strong>On Time</strong></label>
-                        <input type="number" name="on_time" id="on_time" class="form-control" required placeholder="Enter on time">
+                        <input type="number" name="on_time" id="on_time_" class="form-control" required placeholder="Enter on time">
                       </div>
                     </div>
                     <div class="col-md-12 pt-2">
                       <div class="form-group">
                         <label><strong>Off Time</strong></label>
-                        <input type="number" name="off_time" id="off_time" class="form-control" required placeholder="Enter off time">
+                        <input type="number" name="off_time" id="off_time_" class="form-control" required placeholder="Enter off time">
                       </div>
                     </div>
                     <div class="col-md-12 pt-2">
                       <div class="form-group">
                         <label><strong>Target Time</strong></label>
-                        <input type="time" name="target_time" id="target_time" class="form-control" required>
+                        <input type="time" name="target_time" id="target_time_" class="form-control" required>
                       </div>
                     </div>
                   </div>
@@ -602,6 +620,9 @@
     <!-- *************
 			************ Vendor Js Files *************
 		************* -->
+    <script src="assets/local/select2/js/select2.min.js"></script>
+
+    <script src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>
 
     <!-- Overlay Scroll JS -->
     <script src="assets/vendor/overlay-scroll/jquery.overlayScrollbars.min.js"></script>
@@ -611,34 +632,852 @@
     <!-- Custom JS files -->
     <script src="assets/js/custom.js"></script>
     <!-- <script src="inc/sidebarmenu.html"></script> -->
+    <script type="text/javascript" src="inc/paths.js"></script>
 
     <script type="text/javascript">
       $(document).ready(function () {
         $("#sidebar").load("inc/sidebarmenu.html");
       });
+
+      $(document).ready(function() 
+      {
+        $(".select2").select2();
+      });
+
     </script>
 
     <script>
-      // Initialize and add the map
-      function initMap() {
-        // The location to center the map (example: New York)
-        const location = { lat: 21.6321136, lng: 72.9964292 };
+      let sessionwellSite = localStorage.getItem('setWellSiteId');
+      let wellSiteata = JSON.parse(sessionwellSite);
+      let session_well_id = wellSiteata.well_id;
+      let session_site_id = wellSiteata.site_id;
+      // console.log("well_site",wellSiteata);
 
-        // Create the map, centered at the specified location
-        const map = new google.maps.Map(document.getElementById("mymap"), {
-          zoom: 10, // Zoom level
-          center: location,
-        });
 
-        // Add a marker at the specified location
-        const marker = new google.maps.Marker({
-          position: location,
-          map: map,
+      let sessionUserData = localStorage.getItem('userData');
+      let userData = JSON.parse(sessionUserData);
+
+      $(document).ready(function() {
+          let company_id = userData.company_id;
+          let assets_id = userData.assets_id;
+          // area list section
+          $.ajax({
+              url: api_path + "Area_master/AreaList",
+              type: "POST",
+              data:{company_id:company_id, assets_id:assets_id},
+              headers: { 
+                  "x-api-key": "Qm0Lkq9m8JRiGPxO56HNmD7pIVSGzJje"
+              },
+              success:(resp)=>{
+                if(resp.response_code == 200){
+                  $("#area_id").html(`<option value="">-select-</option>`);
+                  $.each(resp.data, (i, v) => {
+                      $("#area_id").append(`<option value="${v.id}">${v.area_name}</option>`);
+                  });
+                  get_url_well_id_moble();
+                }
+              }
+          });
+
+
+          // well type list section 
+          $.ajax({
+              url: api_path + "Master/get_well_type_List",
+              type: "POST",
+              data:{company_id:company_id},
+              headers: { 
+                  "x-api-key": "Qm0Lkq9m8JRiGPxO56HNmD7pIVSGzJje"
+              },
+              success:(resp)=>{
+                if(resp.response_code == 200){
+                  $("#well_type").html(`<option value="">-select-</option>`);
+                  $.each(resp.data, (i,v)=>{
+                      $("#well_type").append(`<option value="${v.id}">${v.well_type_name}</option>`);
+                  });
+                  get_url_well_id_moble();
+                }
+              }
+          });
+      });
+
+      const getSiteList = ()=>{
+        let company_id = userData.company_id;
+        let assets_id = userData.assets_id;
+        let area_id = $("#area_id").val();
+
+        $.ajax({
+            url: api_path + "Well_site_master/Well_SiteList",
+            type: "POST",
+            data: {company_id:company_id,assets_id:assets_id,area_id:area_id},
+            headers: { 
+                "x-api-key": "Qm0Lkq9m8JRiGPxO56HNmD7pIVSGzJje"
+            },
+            success:(resp)=>{
+              if(resp.response_code == 200){
+                $("#site_id").html(`<option value="">-select-</option>`);
+                $.each(resp.data, (i, v) => {
+                    let selected = v.id == session_site_id ? "selected" : "";
+                    $("#site_id").append(
+                        `<option value="${v.id}" ${selected}>${v.well_site_name}</option>`
+                    );
+                });
+                $("#site_id").trigger("change");
+              }
+            }
         });
       }
 
-      // Load the map once the script is loaded
-      window.onload = initMap;
+
+      const get_url_well_id_moble = ()=>{
+        $.ajax({
+            url: api_path + "Area_Dashboard/Single_Device_Data",
+            type: "POST",
+            data:{
+              well_id: session_well_id,
+            },
+            headers: { 
+                "x-api-key": "Qm0Lkq9m8JRiGPxO56HNmD7pIVSGzJje"
+            },
+            success:(resp)=>{
+              if(resp.response_code == 200){
+                if(resp.data.length > 0){
+                  const wellDetails = resp.data[0];
+                  const areaIdToSelect = wellDetails.area_id;
+                  const wellTypeIdToSelect = wellDetails.well_type;
+
+                  $('#area_id').val(areaIdToSelect).trigger('change');
+                  $('#well_type').val(wellTypeIdToSelect).trigger('change');
+                }
+              }
+            }
+        });
+      }
+
+      const getWellNames = ()=>{
+        let company_id = userData.company_id;
+        let assets_id = userData.assets_id;
+        let area_id = $("#area_id").val();
+        let site_id = $("#site_id").val();
+
+        $.ajax({
+            url: api_path + "Well_master/Well_List",
+            type: "POST",
+            data: {company_id:company_id,assets_id:assets_id,area_id:area_id,site_id:site_id},
+            headers: { 
+                "x-api-key": "Qm0Lkq9m8JRiGPxO56HNmD7pIVSGzJje"
+            },
+            success:(resp)=>{
+              if(resp.response_code == 200){
+                $("#well_id").html(`<option value="">-select-</option>`);
+                $.each(resp.data, (i,v)=>{
+                    let selected = v.id == session_well_id ? "selected" : "";
+                    $("#well_id").append(
+                        `<option value="${v.id}" ${selected}>${v.well_name}</option>`
+                    );
+                });
+              }
+            }
+        });
+
+      }
+
+      function updateHeadingFromDropdowns() {
+          const area_name = $('#area_id option:selected').text();
+          const well_type_name = $('#well_type option:selected').text();
+          const well_name = $('#well_id option:selected').text();
+          const well_site_name = $('#site_id option:selected').text();
+         
+          $('#areaName').text(area_name == "Select All" ? '' : area_name);
+          $('#wellTypeName').text(well_type_name == "Select All" ? '' : well_type_name);
+          $('#siteName').text(well_site_name == "Select All" ? '' : well_site_name);
+          $('#wellName').text(well_name == "Select Well" ? '' : well_name);
+      }
+
+      $('#area_id, #site_id,#well_type, #well_id').on('change', function () {
+          updateHeadingFromDropdowns();
+          if (this.id !== 'well_id') getWellNames(); 
+      });
+
+
+      const get_single_well_details_mbl = ()=>{
+          let well_id = $('#well_id').val();
+          $.ajax({
+              url: api_path + "Web_Single_Dashboard_Data/Well_Single_Dashboard_Details",
+              type: "POST",
+              data: {
+                well_id: well_id,
+              },
+              headers: { 
+                  "x-api-key": "Qm0Lkq9m8JRiGPxO56HNmD7pIVSGzJje"
+              },
+              success:(resp)=>{
+                if(resp.response_code == 200){
+                    if (resp.data.single_welldevice_data.length > 0) {
+                      let deviceData = resp.data.single_welldevice_data[0];  
+                      $('#device_name').text(deviceData.device_name || '');
+                      $('#imei_no').text(deviceData.imei_no || '');
+                      $('#imei_no_hdn').val(deviceData.imei_no || '');
+                      $('#well_id_hdn').val(deviceData.well_id || '');
+                      $('#well_name_hdn').text(deviceData.well_name || '');
+                      $('#flag_status').text(deviceData.flag_status || '');
+                      $('#wellidhdn').val(deviceData.well_id || '');
+                      $('#wellnamehdn').text(deviceData.well_name || '');
+                       
+                       var flag_status_data = deviceData.flag_status;
+                       // console.log(flag_status_data,'flag_status');
+                        if(flag_status_data == 0)
+                        {
+                           $('#flag').show();
+                           $('#unflag').hide();
+                           $('#un_flag_by').hide();
+                           $('#flag_by').show();
+                                 
+                        }else{
+                            $('#unflag').show();
+                            $('#flag').hide();
+                            $('#un_flag_by').hide();
+                            $('#flag_by').show();
+                        }
+
+                      $('#chp_image').text(deviceData.PS_2_CHP || 0);
+                      $('#gip_image').text(deviceData.PS_1_GIP || 0);
+                      $('#abp_image').text(deviceData.PS_4_ABP || 0);
+                      $('#thp_image').text(deviceData.PS_3_THP || 0);
+                      $('#tht_image').text(deviceData.FLTP_1_Temp || 0);
+
+                      $('#on_time').text(deviceData.ON_Time || 0);
+                      $('#off_time').text(deviceData.Off_Time || 0);
+                      $('#next_cycle').text(deviceData.TRGT_Time || 0);
+                      $('#last_cycle').text(deviceData.last_on_time || 0);
+
+                      $('#bean_size').text(deviceData.bean_size || "W/B");
+                    
+                      $('#battery_voltage').text(deviceData.Battery_Voltage || 0);
+                      $('#battery_value').text(deviceData.Battery_Voltage || 0);
+
+                     var last_datetime = deviceData.Log_Date_Time != null ? moment(deviceData.Log_Date_Time).format('DD-MM-YYYY h:mm:ss a') :"NA";
+
+                     $('#last_updated_datetime').text(last_datetime);
+                    
+
+                      
+                      var last_updated_time = deviceData.Log_Date_Time;
+                      var lastDataTimeObj = new Date(last_updated_time);
+                      var currentDate = new Date();
+                      var diffInMilliseconds = currentDate - lastDataTimeObj;
+                      seconds = Math.floor(diffInMilliseconds / 1000);
+
+                      if (seconds < 7200) 
+                      {
+                         $('#rtms_status_image').html('<img height="30" src="assets/images/small/greendot.png" alt="symbol-img">');
+                         $('#rtms_status_text').text('ON');
+                      } else {
+                          $('#rtms_status_image').html('<img height="30" src="assets/images/small/reddot.png" alt="symbol-img">');
+                          $('#rtms_status_text').text('OFF');
+                      }
+
+                      var flag_status = deviceData.flag_status;
+                      if (seconds < 7200) {
+                          if (flag_status == 0) {
+                              $('#well_status').text('Flowing');
+                            
+                          } else if (flag_status == 1) {
+                              $('#well_status').text('Non-Flowing');
+                             
+                          }
+                      } else {
+                          $('#well_status').text('Offline');
+                         
+                      }
+
+
+                  function battery(charge) 
+                  {
+                      var activeBars = Math.floor(Math.min(Math.max((charge - 6.0) / (7.9 - 6.0) * 10, 0), 10)); 
+                      $(".battery .bar").each(function(index) 
+                      {
+                          if (index < activeBars) 
+                          {
+                              $(this).addClass("active"); 
+                          } else {
+                             $(this).removeClass("active"); 
+                          }
+                      });
+                  }
+
+                  var battery_value = parseFloat(deviceData.Battery_Voltage); 
+                    battery(battery_value); 
+
+
+                  }
+                }
+              }
+          });
+      }
+
+      const getPresureDetails = ()=>{
+          let well_id = $('#well_id').val();
+          $.ajax({
+                url: api_path + "Web_Single_Dashboard_Data/Well_Single_Dashboard_Details",
+                type: "POST",
+                data: {well_id: well_id},
+                headers: { 
+                    "x-api-key": "Qm0Lkq9m8JRiGPxO56HNmD7pIVSGzJje"
+                },
+                success:(resp)=>{
+                    if(resp.response_code == 200 && resp.data){
+                      let pressureDailyAvg = resp.data.pressure_daily_avg || {};
+                      // console.log("Pressure Daily Average Data:", pressureDailyAvg);
+                      $('#chp_daily').text(pressureDailyAvg.avg_PS_2_CHP || 0);
+                      $('#gip_daily').text(pressureDailyAvg.avg_PS_1_GIP || 0);
+                      $('#abp_daily').text(pressureDailyAvg.avg_PS_4_ABP || 0);
+                      $('#thp_daily').text(pressureDailyAvg.avg_PS_3_THP || 0);
+                      $('#tht_daily').text(pressureDailyAvg.avg_FLTP_1_Temp || 0);
+                     // console.log("THT Daily Value:", pressureDailyAvg.avg_FLTP_1_Temp);
+
+                      // Bind monthly pressure data
+                      let pressureMonthlyAvg = resp.data.pressure_monthly_avg || {};
+                      $('#chp_monthly').text(pressureMonthlyAvg.avg_PS_2_CHP || 0);
+                      $('#gip_monthly').text(pressureMonthlyAvg.avg_PS_1_GIP || 0);
+                      $('#abp_monthly').text(pressureMonthlyAvg.avg_PS_4_ABP || 0);
+                      $('#thp_monthly').text(pressureMonthlyAvg.avg_PS_3_THP || 0);
+                      $('#tht_monthly').text(pressureMonthlyAvg.avg_FLTP_1_Temp || 0);
+                    }
+                }
+          });
+      }
+
+      const graph_date_time = ()=>{
+          const now = new Date();
+          function formatDateToLocalInput(date) {
+              const year = date.getFullYear();
+              const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are 0-based
+              const day = String(date.getDate()).padStart(2, '0');
+              const hours = String(date.getHours()).padStart(2, '0');
+              const minutes = String(date.getMinutes()).padStart(2, '0');
+              return `${year}-${month}-${day}T${hours}:${minutes}`;
+          }
+          const toDateValue = formatDateToLocalInput(now);
+          const fromDateValue = formatDateToLocalInput(new Date(now.getTime() - 24 * 60 * 60 * 1000));
+          document.getElementById('from_date').value = fromDateValue;
+          document.getElementById('to_date').value = toDateValue;
+      }
+
+      const Get_Graph = ()=>{
+
+          let selectedOption = "1";
+          if(selectedOption == "1")
+          {
+            let well_id = $('#well_id').val();
+            let from_date = $('#from_date').val();
+            let to_date = $('#to_date').val();
+            let graph_type = selectedOption;
+
+            $.ajax({
+                url: api_path + "Web_Single_Dashboard_Data/get_Alltype_Single_graphData",
+                type: "POST",
+                data: {
+                  well_id:well_id,
+                  from_date:from_date,
+                  to_date:to_date,
+                  graph_type:selectedOption
+                },
+                headers: { 
+                    "x-api-key": "Qm0Lkq9m8JRiGPxO56HNmD7pIVSGzJje"
+                },
+                success:(resp)=>{
+    
+                  input_volt_l2n_r = resp.data.Output_pressure["output_chp"];
+                  input_volt_l2n_y = resp.data.Output_pressure["output_gip"];
+                  input_volt_l2n_b = resp.data.Output_pressure["output_thp"];
+                  input_volt_l2n_avg = resp.data.Output_pressure["output_abp"];
+                  input_volt_l2n_tht = resp.data.Output_pressure["output_tht"];
+                  input_volt_l2n_battery = resp.data.Output_pressure["output_battery"];
+                  limit_slice = resp.data.Output_pressure["output_chp"].length;
+                  loadchart("neutral_voltage", " ", " CHP ", " GIP ", " THP  ", " ABP ", " THT ", " Battery Voltage", 0, 500);
+                }
+            });
+          }
+      }
+
+      function loadchart(mychart, mytitle, name1, name2, name3, name4, name5, name6, minYVal, maxYVal) {
+          var dataPoints1 = [];
+          var dataPoints2 = [];
+          var dataPoints3 = [];
+          var dataPoints4 = [];
+          var dataPoints5 = [];
+          var dataPoints6 = [];
+
+          // console.log('cvcsf',myvalue);
+
+          var chart = new CanvasJS.Chart(mychart, {
+              zoomEnabled: true,
+              title: {
+                  text: mytitle,
+                  fontSize: 14,
+              },
+              axisX: {
+                  //Try Changing to MMMM
+                  valueFormatString: "DD-MM-YYYY HH:mm:ss",
+                  labelFontSize: 9,
+                  labelAutoFit: true,
+                  labelAngle: 180,
+              },
+              axisY: {
+                  prefix: " ",
+                  labelFontSize: 9,
+              },
+              toolTip: {
+                  shared: true,
+              },
+              legend: {
+                  cursor: "pointer",
+                  verticalAlign: "top",
+                  fontSize: 16,
+                  fontColor: "dimGrey",
+                  itemclick: toggleDataSeries,
+              },
+              data: [
+                  {
+                      type: "line",
+                      xValueType: "dateTime",
+                      xValueFormatString: "DD-MM-YYYY HH:mm:ss",
+                      showInLegend: true,
+                      name: name1,
+                      dataPoints: dataPoints1,
+                      lineColor: "#3a1397",
+                      legendMarkerColor: "#3a1397",
+                      markerColor: "#3a1397",
+                  },
+                  {
+                      type: "line",
+                      xValueType: "dateTime",
+                      xValueFormatString: "DD-MM-YYYY HH:mm:ss",
+                      showInLegend: true,
+                      name: name2,
+                      dataPoints: dataPoints2,
+                      lineColor: "#ec344c",
+                      legendMarkerColor: "#ec344c",
+                      markerColor: "#ec344c",
+                  },
+                  {
+                      type: "line",
+                      xValueType: "dateTime",
+                      xValueFormatString: "DD-MM-YYYY HH:mm:ss",
+                      showInLegend: true,
+                      name: name3,
+                      dataPoints: dataPoints3,
+                      lineColor: "#b55705",
+                      legendMarkerColor: "#b55705",
+                      markerColor: "#b55705",
+                  },
+                  {
+                      type: "line",
+                      xValueType: "dateTime",
+                      xValueFormatString: "DD-MM-YYYY HH:mm:ss",
+                      showInLegend: true,
+                      name: name4,
+                      dataPoints: dataPoints4,
+                      lineColor: "#3add58",
+                      legendMarkerColor: "#3add58",
+                      markerColor: "#3add58",
+                  },
+
+                  {
+                      type: "line",
+                      xValueType: "dateTime",
+                      xValueFormatString: "DD-MM-YYYY HH:mm:ss",
+                      showInLegend: true,
+                      name: name5,
+                      dataPoints: dataPoints5,
+                      lineColor: "#c72c12b8",
+                      legendMarkerColor: "#c72c12b8",
+                      markerColor: "#c72c12b8",
+                  },
+                  {
+                      type: "line",
+                      xValueType: "dateTime",
+                      xValueFormatString: "DD-MM-YYYY HH:mm:ss",
+                      showInLegend: true,
+                      name: name6,
+                      dataPoints: dataPoints6,
+                      lineColor: "#2786f1",
+                      legendMarkerColor: "#2786f1",
+                      markerColor: "#2786f1",
+                  },
+              ],
+          });
+          chart.options.data[0].visible = true;
+          chart.options.data[1].visible = true;
+          chart.options.data[2].visible = true;
+          chart.options.data[3].visible = true;
+          chart.options.data[4].visible = false;
+          chart.options.data[5].visible = false;
+
+          function toggleDataSeries(e) {
+              if (typeof e.dataSeries.visible === "undefined" || e.dataSeries.visible) {
+                  e.dataSeries.visible = false;
+              } else {
+                  e.dataSeries.visible = true;
+              }
+              chart.render();
+          }
+
+          var updateInterval = 1000;
+
+          function updateChart() {
+              for (var i = 0; i < input_volt_l2n_r.length; i++) {
+                  var yValue1 = parseFloat(input_volt_l2n_r[i].y);
+                  var yValue2 = parseFloat(input_volt_l2n_y[i].y);
+                  var yValue3 = parseFloat(input_volt_l2n_b[i].y);
+                  var yValue4 = parseFloat(input_volt_l2n_avg[i].y);
+                  var yValue5 = parseFloat(input_volt_l2n_tht[i].y);
+                  var yValue6 = parseFloat(input_volt_l2n_battery[i].y);
+
+                  var xValue1 = new Date(input_volt_l2n_r[i].x).getTime();
+                  var xValue2 = new Date(input_volt_l2n_y[i].x).getTime();
+                  var xValue3 = new Date(input_volt_l2n_b[i].x).getTime();
+                  var xValue4 = new Date(input_volt_l2n_avg[i].x).getTime();
+                  var xValue5 = new Date(input_volt_l2n_tht[i].x).getTime();
+                  var xValue6 = new Date(input_volt_l2n_battery[i].x).getTime();
+
+                  var prevlnr = 0;
+                  var nextlnr = 0;
+                  var prevlny = 0;
+                  var nextlny = 0;
+                  var prevlnb = 0;
+                  var nextlnb = 0;
+                  var prevAvg = 0;
+                  var nextAvg = 0;
+                  var prevtht = 0;
+                  var nexttht = 0;
+                  var prevbattery = 0;
+                  var nextbattery = 0;
+
+                  if (i > 0) {
+                      prevlnr = parseFloat(input_volt_l2n_r[i - 1].y);
+                      prevlny = parseFloat(input_volt_l2n_y[i - 1].y);
+                      prevlnb = parseFloat(input_volt_l2n_b[i - 1].y);
+                      prevAvg = parseFloat(input_volt_l2n_avg[i - 1].y);
+                      prevtht = parseFloat(input_volt_l2n_tht[i - 1].y);
+                      prevbattery = parseFloat(input_volt_l2n_battery[i - 1].y);
+                  }
+                  if (i < input_volt_l2n_r.length - 1) {
+                      nextlnr = parseFloat(input_volt_l2n_r[i + 1].y);
+                      nextlny = parseFloat(input_volt_l2n_y[i + 1].y);
+                      nextlnb = parseFloat(input_volt_l2n_b[i + 1].y);
+                      nextAvg = parseFloat(input_volt_l2n_avg[i + 1].y);
+                      nexttht = parseFloat(input_volt_l2n_tht[i + 1].y);
+                      nextbattery = parseFloat(input_volt_l2n_battery[i + 1].y);
+                  }
+                  if (dataPoints1.length < limit_slice) {
+                      if (!(prevlnr > 0 && parseFloat(input_volt_l2n_r[i].y) <= 0 && nextlnr > 0)) {
+                          dataPoints1.push({
+                              x: xValue1,
+                              y: yValue1,
+                          });
+                      }
+                      if (!(prevlny > 0 && parseFloat(input_volt_l2n_y[i].y) <= 0 && nextlny > 0)) {
+                          dataPoints2.push({
+                              x: xValue2,
+                              y: yValue2,
+                          });
+                      }
+                      if (!(prevlnb > 0 && parseFloat(input_volt_l2n_b[i].y) <= 0 && nextlnb > 0)) {
+                          dataPoints3.push({
+                              x: xValue3,
+                              y: yValue3,
+                          });
+                      }
+                      if (!(prevAvg > 0 && parseFloat(input_volt_l2n_avg[i].y) <= 0 && nextAvg > 0)) {
+                          dataPoints4.push({
+                              x: xValue4,
+                              y: yValue4,
+                          });
+                      }
+                      if (!(prevtht > 0 && parseFloat(input_volt_l2n_tht[i].y) <= 0 && nexttht > 0)) {
+                          dataPoints5.push({
+                              x: xValue5,
+                              y: yValue5,
+                          });
+                      }
+
+                      if (!(prevbattery > 0 && parseFloat(input_volt_l2n_battery[i].y) <= 0 && nextbattery > 0)) {
+                          dataPoints6.push({
+                              x: xValue6,
+                              y: yValue6,
+                          });
+                      }
+                  } else {
+                      if (!(prevlnr > 0 && parseFloat(input_volt_l2n_r[i].y) <= 0 && nextlnr > 0)) {
+                          dataPoints1.shift();
+                          dataPoints1.push({
+                              x: xValue1,
+                              y: yValue1,
+                          });
+                      }
+                      if (!(prevlny > 0 && parseFloat(input_volt_l2n_y[i].y) <= 0 && nextlny > 0)) {
+                          dataPoints2.shift();
+                          dataPoints2.push({
+                              x: xValue2,
+                              y: yValue2,
+                          });
+                      }
+                      if (!(prevlnb > 0 && parseFloat(input_volt_l2n_b[i].y) <= 0 && nextlnb > 0)) {
+                          dataPoints3.shift();
+                          dataPoints3.push({
+                              x: xValue3,
+                              y: yValue3,
+                          });
+                      }
+                      if (!(prevAvg > 0 && parseFloat(input_volt_l2n_avg[i].y) <= 0 && nextAvg > 0)) {
+                          dataPoints4.shift();
+                          dataPoints4.push({
+                              x: xValue4,
+                              y: yValue4,
+                          });
+                      }
+
+                      if (!(prevtht > 0 && parseFloat(input_volt_l2n_tht[i].y) <= 0 && nexttht > 0)) {
+                          dataPoints5.shift();
+                          dataPoints5.push({
+                              x: xValue5,
+                              y: yValue5,
+                          });
+                      }
+
+                      if (!(prevbattery > 0 && parseFloat(input_volt_l2n_battery[i].y) <= 0 && nextbattery > 0)) {
+                          dataPoints6.shift();
+                          dataPoints6.push({
+                              x: xValue6,
+                              y: yValue6,
+                          });
+                      }
+                  }
+              }
+              chart.options.data[0].legendText = name1 + yValue1;
+              chart.options.data[1].legendText = name2 + yValue2;
+              chart.options.data[2].legendText = name3 + yValue3;
+              chart.options.data[3].legendText = name4 + yValue4;
+              chart.options.data[4].legendText = name5 + yValue5;
+              chart.options.data[5].legendText = name6 + yValue6;
+              chart.render();
+          }
+          updateChart();
+          setInterval(function () {
+              updateChart();
+          }, updateInterval);
+      }
+
+      const alert_log_mbl = ()=>{
+        let well_id = $('#well_id').val();
+        $.ajax({
+              url: api_path + "Web_Single_Dashboard_Data/Well_Single_Dashboard_Details",
+              type: "POST",
+              data: {
+                  well_id: well_id,
+              },
+              headers: { 
+                  "x-api-key": "Qm0Lkq9m8JRiGPxO56HNmD7pIVSGzJje"
+              },
+              success:(resp)=>{
+                if(resp.response_code == 200){
+                  $('#alert_count').html(resp.data.total_alert); 
+                  $("#alert_log_table").html(``);
+                  $.each(resp.data.well_alert_details, (i,v)=>{
+
+                  var alert_data = '';
+                  var alert_type = v.alert_type;
+                  if (alert_type == 0) 
+                  {
+                      alert_data = 'SOV ON';
+                  } else if (alert_type == 1) 
+                  {
+                      alert_data = 'SOV OFF';
+                  } else if (alert_type == 2) 
+                  {
+                      alert_data = 'Battery Low';
+                  } else if (alert_type == 3) 
+                  {
+                      alert_data = 'Battery High';
+                  } else if (alert_type == 4) 
+                  {
+                      alert_data = 'GIP Low';
+                  } else if (alert_type == 5) 
+                  {
+                      alert_data = 'GIP High';
+                  } else if (alert_type == 6) 
+                  {
+                      alert_data = 'THP Low';
+                  } else if (alert_type == 7) 
+                  {
+                      alert_data = 'THP High';
+                  } else if (alert_type == 8) 
+                  {
+                      alert_data = 'CHP Low';
+                  } else if (alert_type == 9) 
+                  {
+                      alert_data = 'CHP High';
+                  } else if (alert_type == 10) 
+                  {
+                      alert_data = 'ABP Low';
+                  } else if (alert_type == 11) 
+                  {
+                      alert_data = 'ABP High';
+                  } else if (alert_type == 12) 
+                  {
+                      alert_data = 'Temp Low';
+                  } else if (alert_type == 13) 
+                  {
+                      alert_data = 'Temp High';
+                  } else {
+                      alert_data = 'Unknown Alert Type';
+                  }
+                  let date = new Date(v.trip_datetime);
+                  let formatedDatetime = `${date.getDate().toString().padStart(2, '0')}-${(date.getMonth() + 1).toString().padStart(2, '0')}-${date.getFullYear()} ${date.getHours().toString().padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')}:${date.getSeconds().toString().padStart(2, '0')}`;
+                  $("#alert_log_table").append(`<tr>
+                              <td>${i + 1}</td>
+                              <td>${alert_data}</td>
+                              <td>${v.alert_details}</td>
+                              <td>${formatedDatetime}</td>
+                          </tr>`);
+                  });
+                }else{
+                    $("#alert_log_table").html(`<tr><td colspan="4"> No alert log found! </td></tr>`);
+                }
+              }
+        });
+      }
+
+      const initMap_mbl = ()=>{
+          let area_id = $('#area_id').val();
+          let well_id = $('#well_id').val();
+          let well_type = $('#well_type').val();
+
+          $.ajax({
+                url: api_path + "Area_Dashboard/SiteList_for_Map",
+                type: "POST",
+                data: {
+                  area_id: area_id,
+                  well_id: well_id,
+                  well_type: well_type
+                },
+                headers: { 
+                    "x-api-key": "Qm0Lkq9m8JRiGPxO56HNmD7pIVSGzJje"
+                },
+                success:(resp)=>{
+                  if(resp.response_code == 200){
+                    if(resp.data.length > 0){
+                      let markers = [];
+                      let selectedWell = null; 
+
+                      for (let item of resp.data) {
+                          if (item.well_id === well_id) {
+                              selectedWell = item;
+                          }
+
+                          markers.push({
+                              position: { lat: parseFloat(item.lat), lng: parseFloat(item.long) },
+                              title: item.well_name,
+                              well_id: item.well_id,
+                              offline_time: item.Log_Date_Time,
+                              flag_status: item.flag_status,
+                              long: item.long,
+                              lat: item.lat
+                          });
+                      }
+                      let mapCenter = { lat: 21.6316586, lng: 72.994056 };  // Default center
+                      if (selectedWell) {
+                          mapCenter = { lat: parseFloat(selectedWell.lat), lng: parseFloat(selectedWell.long) };
+                      }
+
+                      var map = new google.maps.Map(document.getElementById('mymap'), {
+                          zoom: 13,
+                          center: mapCenter
+                      });
+
+                      markers.forEach(function (marker) {
+                          var markerIcon = {
+                              url: 'assets/images/red.png', 
+                              scaledSize: new google.maps.Size(20, 20)
+                          };
+
+                          var seconds = 200;
+
+                          if (marker.offline_time) {
+                              var lastDataTimeObj = new Date(marker.offline_time);
+                              var currentDate = new Date();
+
+                              var diffInMilliseconds = currentDate - lastDataTimeObj;
+                              seconds = Math.floor(diffInMilliseconds / 1000);
+                          }
+
+                          if (!marker.offline_time || seconds > 7200) {
+                              markerIcon.url = 'assets/images/red.png'; 
+                          } else if (seconds <= 7200 && marker.flag_status == 0) {
+                              markerIcon.url = 'assets/images/green.png'; 
+                          } else if (seconds <= 7200 && marker.flag_status == 1) {
+                              markerIcon.url = 'assets/images/red.png'; 
+                          }
+
+                          var mapMarker = new google.maps.Marker({
+                              position: marker.position,
+                              map: map,
+                              icon: markerIcon,
+                              title: marker.title,
+                              lat: marker.lat,
+                              long: marker.long
+                          });
+
+                          var statusText = '';
+                          if (!marker.offline_time || seconds > 7200) {
+                              statusText = 'Offline';
+                          } else if (seconds <= 7200 && marker.flag_status == 0) {
+                              statusText = 'Flowing';
+                          } else if (seconds <= 7200 && marker.flag_status == 1) {
+                              statusText = 'Non-Flowing';
+                          }
+
+                          var infowindow = new google.maps.InfoWindow({
+                              content:
+                                  '<div class="site-info" style="width: 150px; height: auto;">' +
+                                  '<h6 style="color:black;"><a target="_blank" href="https://www.google.com/maps/place/' + marker.lat + ',' + marker.long + '" style="color:blue;">View on Google Maps</a></h6>' +
+                                  '<h6>' + marker.title + '</h6>' +
+                                  '<h6><b>Well Status</b>: ' + statusText + '</h6>' +
+                                  '</div>'
+                          });
+
+                          mapMarker.addListener('click', function () {
+                              infowindow.open(map, mapMarker);
+                          });
+
+                          // Close InfoWindow on map click
+                          map.addListener('click', function () {
+                              infowindow.close();
+                          });
+                      });
+                    }
+                  }
+                }
+          });
+      }
+
+      get_url_well_id_moble();
+      $(document).ready(function () {
+          setTimeout(() => {
+              const wellId = $('#well_id').val();
+              if (wellId) {
+                  get_single_well_details_mbl();
+                  getPresureDetails();
+                  graph_date_time();
+                  Get_Graph();
+                  alert_log_mbl();
+                  initMap_mbl();
+              } else {
+                  console.warn("Well ID is still null after delay.");
+              }
+          }, 1000); 
+      });
     </script>
 
   </body>

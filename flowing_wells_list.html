@@ -40,6 +40,12 @@
       table thead tr th{
         background-color: #ecf3f9ed !important;
       }
+      .download-btns{
+        float: right;
+        font-size: 24px;
+        padding-right: 8px;
+        color: saddlebrown;
+      }
     </style>
 
   </head>
@@ -141,6 +147,9 @@
                     <h5 class="card-title" style="font-family: sans-serif;font-weight: 700;">
                       Total Flowing Wells List
                       <a href="main_dashboard.html" class="btn btn-sm btn-primary" style="float: right;">Back</a>
+                      <a href="javascript:;" class="download-btns" onclick="exportTotalWellReport()" style="float: right;">
+                          <i class="fa-solid fa-download"></i>
+                      </a>
                     </h5>
                   </div>
                   <div class="card-body">
@@ -155,99 +164,26 @@
                               <th>Area</th>
                               <th>Site</th>
                               <th>Well Type</th>
-                              <th>Well</th>
-                              <th>Last Updated Time</th>
-                              <th>PS1-GIP</th>
-                              <th>PS2-CHP</th>
-                              <th>PS3-THP</th>
-                              <th>PS4-ABP</th>
-                              <th>Temp</th>
-                              <th>Battery Voltage</th>
-                              <th>PSF1</th>
-                              <th>PSF2</th>
-                              <th>PSF3</th>
-                              <th>PSF4</th>
-                              <th>TSF1</th>
-                              <th>BVF1</th>
-                              <th>SF1-solenide</th>
+                              <th>Well Name</th>
+                              <th style="min-width: 80px !important;">Last Updated Time</th>
+                              <th>GIP</th>
+                              <th>CHP</th>
+                              <th>THP</th>
+                              <th>ABP</th>
+                              <th>THT</th>
+                              <th>Battery(V)</th>
                               <th>Target Time</th>
                               <th>On Time</th>
                               <th>OFf Time</th>
                             </tr>
                           </thead>
-                          <tbody>
-                            <tr>
-                              <td>1</td>
-                              <td>
-                                Deena Cooley
-                              </td>
-                              <td>
-                                Deena Cooley
-                              </td>
-                              <td>
-                                Deena Cooley
-                              </td>
-                              <td>
-                                Deena Cooley
-                              </td>
-                              <td>
-                                Deena Cooley
-                              </td>
-                              <td>
-                                Deena Cooley
-                              </td>
-                              <td>
-                                Deena Cooley
-                              </td>
-                              <td>
-                                Deena Cooley
-                              </td>
-                              <td>
-                                Deena Cooley
-                              </td>
-                              <td>
-                                Deena Cooley
-                              </td>
-                              <td>
-                                Deena Cooley
-                              </td>
-                              <td>
-                                Deena Cooley
-                              </td>
-                              <td>
-                                Deena Cooley
-                              </td>
-                              <td>
-                                Deena Cooley
-                              </td>
-                              <td>
-                                Deena Cooley
-                              </td>
-                              <td>
-                                Deena Cooley
-                              </td>
-                              <td>
-                                Deena Cooley
-                              </td>
-                              <td>
-                                Deena Cooley
-                              </td>
-                              <td>
-                                Deena Cooley
-                              </td>
-                              <td>
-                                Deena Cooley
-                              </td>
-                              <td>
-                                Deena Cooley
-                              </td>
-                            </tr>
+                          <tbody id="flowing_wells_tables" style="font-size: 12px !important;">
+                            
                           </tbody>
                         </table>
                       </div>
                     </div>
                     <!-- Table ends -->
-
                   </div>
                 </div>
               </div>
@@ -280,7 +216,7 @@
     <script src="assets/js/jquery.min.js"></script>
     <script src="assets/js/bootstrap.bundle.min.js"></script>
     <script src="assets/js/moment.min.js"></script>
-
+    <script type="text/javascript" src="inc/paths.js"></script>
     <!-- *************
 			************ Vendor Js Files *************
 		************* -->
@@ -297,6 +233,112 @@
       $(document).ready(function () {
         $("#sidebar").load("inc/sidebarmenu.html");
       });
+    </script>
+    <script type="text/javascript">
+        let sessionWellIds = localStorage.getItem('wellSessionIds');
+        let wellIds = JSON.parse(sessionWellIds);
+
+        let sessionUserData = localStorage.getItem('userData');
+        let userData = JSON.parse(sessionUserData);
+
+        const getFlowingWellsList = ()=>{
+          $.ajax({
+              url: api_path + "Area_Dashboard/Dashboard_Flowing_well",
+              type: "POST",
+              data: {
+                  // Include any required data here, for example:
+                  area_id: wellIds?.area_id,
+                  site_id: wellIds?.site_id,
+                  well_type: wellIds?.well_type,
+                  well_id: wellIds?.well_id,
+                  assets_id: userData.assets_id,
+                  user_id: userData.user_id,
+              },
+              headers: {
+                  "x-api-key": "Qm0Lkq9m8JRiGPxO56HNmD7pIVSGzJje"
+              },
+              success: function (resp) {
+                  console.log("Response", resp);
+                  if(resp.response_code == 200){
+                    if(resp.data.length > 0){
+                      $("#flowing_wells_tables").html(``);
+                      $.each(resp.data, (i,v)=>{
+
+                          var last_updated_time  = v.Log_Date_Time != null ? moment(v.Log_Date_Time).format('DD-MM-YYYY h:mm:ss a') :"-";
+
+                          $("#flowing_wells_tables").append(`<tr>
+                              <td>${i + 1}</td>
+                              <td>${v.area_name}</td>
+                              <td>${v.well_site_name}</td>
+                              <td>${v.well_type_name}</td>
+                              <td><a href="javascript:;" onclick="fw_to_single_dashboard_details(this.id)" id="${v.well_id}|${v.site_id}" style="color: blue;font-weight: 700;">${v.well_name}</a></td>
+                              <td>${last_updated_time}</td>
+                              <td>${v.PS_1_GIP ? v.PS_1_GIP : "-"}</td>
+                              <td>${v.PS_2_CHP ? v.PS_2_CHP : "-"}</td>
+                              <td>${v.PS_3_THP ? v.PS_3_THP : "-"}</td>
+                              <td>${v.PS_4_ABP ? v.PS_4_ABP : "-"}</td>
+                              <td>${v.FLTP_1_Temp ? v.FLTP_1_Temp : "-"}</td>
+                              <td>${v.Battery_Voltage ? v.Battery_Voltage : "-"}</td>
+                              <td>${v.TRGT_Time ? v.TRGT_Time : "-"}</td>
+                              <td>${v.ON_Time ? v.ON_Time : "-"}</td>
+                              <td>${v.Off_Time ? v.Off_Time : "-"}</td>
+                            </tr>`);
+                      });
+                    }else{
+                      $("#flowing_wells_tables").html(`<tr><td colspan="18"> No record found!</td></tr>`);
+                    }
+                  }
+              },
+              error: function (error) {
+                  console.error("Error", error);
+              }
+          });
+        }
+
+        const exportTotalWellReport = () => {
+            let table = document.getElementById("flowing_wells_tables"); // Replace with your table's ID
+            let rows = table.querySelectorAll("tr");
+            let csvContent = [];
+
+            // Iterate over rows to extract data
+            rows.forEach((row) => {
+                let cols = row.querySelectorAll("th, td"); // Include table headers and data
+                let rowData = [];
+                cols.forEach((col) => rowData.push(col.innerText.trim())); // Get cell text
+                csvContent.push(rowData.join(",")); // Join cell data with commas
+            });
+
+            // Convert array to CSV string
+            let csvString = csvContent.join("\n");
+
+            // Create a Blob from the CSV
+            let blob = new Blob([csvString], { type: "text/csv" });
+
+            // Create a download link
+            let link = document.createElement("a");
+            link.href = URL.createObjectURL(blob);
+            link.download = "Flowing_Wells_Report.csv"; // Filename
+            link.style.display = "none";
+
+            // Append link to body and trigger click
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        };
+
+
+        const fw_to_single_dashboard_details = (datas)=>{
+          let [well_id, site_id] = datas.split("|");
+          let well_siteId = [];
+          well_siteId = {
+              well_id: well_id,
+              site_id: site_id,
+          };
+          localStorage.setItem('setWellSiteId',JSON.stringify(well_siteId));
+          window.location.href = 'single_well_dashboard.html';
+        }
+
+        getFlowingWellsList();
     </script>
 
   </body>

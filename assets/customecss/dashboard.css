@@ -102,7 +102,7 @@
 }
 .card-indicator-section .box2{
   border-radius: 15px;
-  background-color: #e50000;
+  background-color: #ff5a39;
   height: 20px;
   width: 20px;
 }
@@ -115,4 +115,7 @@
 .device-pills a{
   font-weight: 600;
   font-size: 20px;
+}
+.app-hero-header{
+  padding: .5rem 0.5rem !important;
 }

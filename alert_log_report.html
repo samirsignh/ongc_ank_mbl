@@ -28,6 +28,7 @@
     <link rel="stylesheet" href="assets/fonts/remix/remixicon.css">
     <link rel="stylesheet" href="assets/css/main.min.css">
     <link rel="stylesheet" type="text/css" href="assets/customecss/dashboard.css">
+    <link href="assets/local/select2/css/select2.min.css" rel="stylesheet" type="text/css" />
 
     <!-- *************
 		************ Vendor Css Files *************
@@ -39,6 +40,16 @@
     <style type="text/css">
       table thead tr th{
         background-color: #ecf3f9ed !important;
+      }
+      .select2-selection.select2-selection--single{
+        height: 35px !important;
+      }
+      .select2-selection__rendered{
+        margin-top: 2px;
+      }
+      .select2-container--default .select2-selection--single .select2-selection__arrow{
+        top: 5px;
+        right: 8px;
       }
     </style>
 
@@ -135,7 +146,7 @@
 
             <!-- Row starts -->
             <div class="row gx-3">
-              <div class="col-sm-12">
+              <div class="col-xl-12">
                 <div class="card mb-3">
                   <div class="card-header">
                     <h5 class="card-title" style="font-family: sans-serif;font-weight: 700;">
@@ -143,51 +154,97 @@
                       <a href="single_well_dashboard.html" class="btn btn-sm btn-primary" style="float: right;">Back</a>
                     </h5>
                   </div>
-                  <div class="card-body">
+                  <div class="card-body" style="padding: 8px 12px;">
+                    <div class="alert-filters">
+                      <div class="row">
+                        <div class="col-md-12">
+                          <div class="form-group">
+                            <label><strong>Well Type</strong></label>
+                            <select class="form-select select2" onchange="getWellNameList(); get_alert_log_report()" name="well_type" id="well_type">
+                              
+                            </select>
+                          </div>
+                        </div>
+                        <div class="col-md-12 pt-1">
+                          <div class="form-group">
+                            <label><strong>Well Name</strong></label>
+                            <select class="form-control select2" onchange="get_alert_log_report()" name="well_id" id="well_id">
+                              
+                            </select>
+                          </div>
+                        </div>
+                        <div class="col-md-12 pt-1">
+                          <div class="form-group">
+                            <label><strong>Alert Type</strong></label>
+                            <select class="form-control select2" onchange="get_alert_log_report()" name="alert_id" id="alert_id">
+                              <option value="">-select-</option>
+                              <option value="0">SOV ON</option>
+                              <option value="1">SOV Off</option>
+                              <option value="2">Battery Low</option>
+                              <option value="3">Battery High</option>
+                              <option value="4">GIP Low</option>
+                              <option value="5">GIP High</option>
+                              <option value="6">THP Low</option>
+                              <option value="7">THP High</option>
+                              <option value="8">CHP Low</option>
+                              <option value="9">CHP Low</option>
+                              <option value="10">ABP Low</option>
+                              <option value="11">ABP High</option>
+                              <option value="12">Temp Low</option>
+                              <option value="13">Temp High</option>
+                            </select>
+                          </div>
+                        </div>
+                        <div class="col-md-12 pt-1">
+                          <div class="form-group">
+                            <label><strong>From Date</strong></label>
+                            <input type="date" onchange="get_alert_log_report(); get_installation_date()" name="from_date" id="from_date" class="form-control">
+                          </div>
+                        </div>
+                        <div class="col-md-12 pt-1">
+                          <div class="form-group">
+                            <label><strong>To Date</strong></label>
+                            <input type="date" onchange="get_alert_log_report(); get_installation_date();" name="to_date" id="to_date" class="form-control">
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
 
+            <div class="row gx-3">
+              <div class="col-sm-12">
+                <div class="card mb-3">
+                  <div class="card-body" style="padding: 8px 8px;">
                     <!-- Table starts -->
                     <div class="table-outer">
                       <div class="table-responsive">
                         <table class="table m-0 align-middle">
                           <thead>
                             <tr>
+                              <th class="pb-0" colspan="8"><h5 class="text-center" style="font-size: 17px !important;">IOT Based Real Time Well Monitoring System ONGC,Ankleshwar Asset</h5></th>
+                            </tr>
+                            <tr>
+                              <th colspan="8"><h6 class="text-center">Alert Log Report as on <span id="report_from_date"></span> To <span id="report_to_date"></span></h6></th>
+                            </tr>
+                            <tr>
                               <th>#</th>
                               <th>Site Name</th>
                               <th>Well Name</th>
                               <th>Alert Type</th>
                               <th>Alert Details</th>
-                              <th>From Date Time</th>
-                              <th>To Date Time</th>
+                              <th>Alert D/T</th>
                             </tr>
                           </thead>
-                          <tbody>
-                            <tr>
-                              <td>1</td>
-                              <td>
-                                Deena Cooley
-                              </td>
-                              <td>
-                                asad
-                              </td>
-                              <td>
-                                Deena Cooley
-                              </td>
-                              <td>
-                                Deena Cooley
-                              </td>
-                              <td>
-                                Deena Cooley
-                              </td>
-                              <td>
-                                Deena Cooley
-                              </td>
-                            </tr>
+                          <tbody id="alert_log_report_table">
+                            
                           </tbody>
                         </table>
                       </div>
                     </div>
                     <!-- Table ends -->
-
                   </div>
                 </div>
               </div>
@@ -224,11 +281,12 @@
     <!-- *************
 			************ Vendor Js Files *************
 		************* -->
-
+    <script type="text/javascript" src="inc/paths.js"></script>
     <!-- Overlay Scroll JS -->
     <script src="assets/vendor/overlay-scroll/jquery.overlayScrollbars.min.js"></script>
     <script src="assets/vendor/overlay-scroll/custom-scrollbar.js"></script>
 
+    <script src="assets/local/select2/js/select2.min.js"></script>
     <!-- Custom JS files -->
     <script src="assets/js/custom.js"></script>
     <!-- <script src="inc/sidebarmenu.html"></script> -->
@@ -237,6 +295,211 @@
       $(document).ready(function () {
         $("#sidebar").load("inc/sidebarmenu.html");
       });
+    </script>
+
+    <script type="text/javascript">
+
+      let sessionUserData = localStorage.getItem('userData');
+      let userData = JSON.parse(sessionUserData);
+      
+      $(document).ready(function(){
+        $(".select2").select2();
+      });
+
+      const graph_date_time = ()=>{
+          const now = new Date();
+          function formatDateToLocalInput(date) {
+              const year = date.getFullYear();
+              const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are 0-based
+              const day = String(date.getDate()).padStart(2, '0');
+              const hours = String(date.getHours()).padStart(2, '0');
+              const minutes = String(date.getMinutes()).padStart(2, '0');
+              return `${year}-${month}-${day}`;
+          }
+          const toDateValue = formatDateToLocalInput(now);
+          const fromDateValue = formatDateToLocalInput(new Date(now.getTime()));
+          document.getElementById('from_date').value = fromDateValue;
+          document.getElementById('to_date').value = toDateValue;
+      }
+
+      const get_well_type_list = ()=>{
+        $.ajax({
+            url: api_path + "Master/get_well_type_List",
+            type: "POST",
+            data: {
+                company_id: userData.company_id,
+            },
+            headers: {
+                "x-api-key": "Qm0Lkq9m8JRiGPxO56HNmD7pIVSGzJje"
+            },
+            success:(resp)=>{
+              if(resp.response_code == 200){
+                if(resp.data.length > 0){
+                  $("#well_type").html(`<option value="">-select-</option>`);
+                  $.each(resp.data, (i,v)=>{
+                      $("#well_type").append(`<option value="${v.id}">${v.well_type_name}</option>`);
+                  });
+                }else{
+                  $("#well_type").html(`<option value="">-select-</option>`)
+                }
+              }
+            }
+        });
+      }
+
+      const getWellNameList = ()=>{
+        $.ajax({
+            url: api_path + "Area_Dashboard/WellList_forDashboard",
+            type: "POST",
+            data: {
+                company_id: userData.company_id,
+                user_id: userData.user_id,
+                well_type: $("#well_type").val(),
+            },
+            headers: {
+                "x-api-key": "Qm0Lkq9m8JRiGPxO56HNmD7pIVSGzJje"
+            },
+            success:(resp)=>{
+              if(resp.response_code == 200){
+                if(resp.data.length > 0){
+                  $("#well_id").html(`<option value="">-select-</option>`);
+                  $.each(resp.data, (i,v)=>{
+                      $("#well_id").append(`<option value="${v.well_id}">${v.well_name}</option>`);
+                  });
+                }else{
+                  $("#well_id").html(`<option value="">-select-</option>`)
+                }
+              }
+            }
+        });
+      }
+
+      function get_installation_date()
+      {
+          var from_date = $('#from_date').val();
+          var to_date = $('#to_date').val();
+
+          f_from_date = moment(from_date);
+          t_to_date = moment(to_date);
+
+          if(f_from_date.isValid())
+          {
+              $('#report_from_date').text(f_from_date.format("DD-MM-YYYY"));
+              $('#to').show();
+          }else{
+              $('#report_from_date').text('');
+          }
+
+          if(t_to_date.isValid())
+          {
+              $('#report_to_date').text(t_to_date.format("DD-MM-YYYY"));
+              $('#to').show();
+          }else{
+              $('#report_to_date').text('');
+          }
+
+          // Additional check to show only the 'from date' if from_date == to_date
+            if (f_from_date.isValid() && t_to_date.isValid() && f_from_date.isSame(t_to_date, 'day')) {
+              $('#report_to_date').text('');
+              $('#to').hide();
+
+            }
+
+      }
+
+      const get_alert_log_report = ()=>{
+        $("#alert_log_report_table").html(`<tr><td colspan="8" style="text-align:center;color:grey;"> Please wait.....loading!</td></tr>`);
+        $.ajax({
+            url: api_path + "Report/Alert_Report",
+            type: "POST",
+            data: {
+                company_id: userData.company_id,
+                user_id: userData.user_id,
+                well_type: $("#well_type").val(),
+                well_id: $("#well_id").val(),
+                alert_type: $("#alert_type").val(),
+                from_date: $("#from_date").val(),
+                to_date: $("#to_date").val(),
+            },
+            headers: {
+                "x-api-key": "Qm0Lkq9m8JRiGPxO56HNmD7pIVSGzJje"
+            },
+            success:(resp)=>{
+              if(resp.response_code == 200){
+                if(resp.data.length > 0){
+                  $("#alert_log_report_table").html(``);
+                  $.each(resp.data, (i,v)=>{
+                      var alert_data = '';
+                      var alert_type = v.alert_type;
+                      if (alert_type == 0) 
+                      {
+                          alert_data = 'SOV ON';
+                      } else if (alert_type == 1) 
+                      {
+                          alert_data = 'SOV OFF';
+                      } else if (alert_type == 2) 
+                      {
+                          alert_data = 'Battery Low';
+                      } else if (alert_type == 3) 
+                      {
+                          alert_data = 'Battery High';
+                      } else if (alert_type == 4) 
+                      {
+                          alert_data = 'GIP Low';
+                      } else if (alert_type == 5) 
+                      {
+                          alert_data = 'GIP High';
+                      } else if (alert_type == 6) 
+                      {
+                          alert_data = 'THP Low';
+                      } else if (alert_type == 7) 
+                      {
+                          alert_data = 'THP High';
+                      } else if (alert_type == 8) 
+                      {
+                          alert_data = 'CHP Low';
+                      } else if (alert_type == 9) 
+                      {
+                          alert_data = 'CHP High';
+                      } else if (alert_type == 10) 
+                      {
+                          alert_data = 'ABP Low';
+                      } else if (alert_type == 11) 
+                      {
+                          alert_data = 'ABP High';
+                      } else if (alert_type == 12) 
+                      {
+                          alert_data = 'Temp Low';
+                      } else if (alert_type == 13) 
+                      {
+                          alert_data = 'Temp High';
+                      } else {
+                          alert_data = 'Unknown Alert Type';
+                      }
+                      var alerts_details = v.alert_details != null ? v.alert_details :"NA";
+                      var start_date_time  = v.alert_date_time != null ? moment(v.alert_date_time).format('DD-MM-YYYY h:mm:ss a') :"NA";
+
+                      $("#alert_log_report_table").append(`<tr>
+                                <td>${i + 1}</td>
+                                <td>${v.well_site_name}</td>
+                                <td>${v.well_name}</td>
+                                <td>${alert_data}</td>
+                                <td>${alerts_details}</td>
+                                <td>${start_date_time}</td>
+                              </tr>`);
+                  });
+                }else{
+                  $("#alert_log_report_table").html(`<tr><td colspan="8" style="text-align:center;color:red;"> No record found!</td></tr>`);
+                }
+              }
+            }
+        });
+      }
+
+      graph_date_time();
+      get_well_type_list();
+      get_installation_date();
+      get_alert_log_report();
     </script>
 
   </body>
