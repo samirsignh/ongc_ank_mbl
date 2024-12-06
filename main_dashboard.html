@@ -126,7 +126,36 @@
 
         <!-- Sidebar wrapper starts -->
         <nav id="sidebar" class="sidebar-wrapper">
-          
+
+          <!-- Sidebar menu starts -->
+          <div class="sidebarMenuScroll">
+            <ul class="sidebar-menu">
+              <li class="active current-page">
+                <a href="main_dashboard.html">
+                  <i class="ri-home-6-line"></i>
+                  <span class="menu-text">Dashboard</span>
+                </a>
+              </li>
+              <li class="treeview">
+                <a href="#!">
+                  <i class="ri-bar-chart-line"></i>
+                  <span class="menu-text">Rports</span>
+                </a>
+                <ul class="treeview-menu">
+                  <li>
+                    <a href="historical_log.html">Historical Reports</a>
+                  </li>
+                  <li>
+                    <a href="alert_log_report.html">Alert Report</a>
+                  </li>
+                  <li>
+                    <a href="historical_graph.html">Historical Graph Report</a>
+                  </li>
+                </ul>
+              </li>
+            </ul>
+          </div>
+          <!-- Sidebar menu ends -->
         </nav>
         <!-- Sidebar wrapper ends -->
 
@@ -387,7 +416,7 @@
                 <div class="accordion mb-3" id="well_detailsAccordian">
                   <div class="accordion-item">
                     <h2 class="accordion-header" id="welldetailsaccordians">
-                      <button class="accordion-button" type="button" data-bs-toggle="collapse"
+                      <button class="accordion-button" onclick="get_dashboard_well_details()" type="button" data-bs-toggle="collapse"
                         data-bs-target="#well_details_accordians" aria-expanded="true"
                         aria-controls="well_details_accordians">
                         <div class="name-tilte">
@@ -424,7 +453,7 @@
                 <div class="accordion mb-3" id="asset_gis_map_accordian">
                   <div class="accordion-item">
                     <h2 class="accordion-header" id="assetGIS_map_accordians">
-                      <button class="accordion-button" type="button" data-bs-toggle="collapse"
+                      <button class="accordion-button" onclick="initMap()" type="button" data-bs-toggle="collapse"
                         data-bs-target="#asset_gisMapAccordian" aria-expanded="true"
                         aria-controls="asset_gisMapAccordian">
                         <div class="name-tilte">
@@ -524,12 +553,6 @@
       $(document).ready(function() 
       {
         $(".select2").select2();
-      });
-    </script>
-
-    <script type="text/javascript">
-      $(document).ready(function () {
-        $("#sidebar").load("inc/sidebarmenu.html");
       });
     </script>
 
@@ -907,8 +930,8 @@
       };
 
       get_dashboard_counts();
-      get_dashboard_well_details();
-      initMap();
+      // get_dashboard_well_details();
+      // initMap();
     </script>
 
   </body>

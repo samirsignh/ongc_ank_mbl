@@ -117,7 +117,33 @@
 
         <!-- Sidebar wrapper starts -->
         <nav id="sidebar" class="sidebar-wrapper">
-          
+
+          <!-- Sidebar menu starts -->
+          <div class="sidebarMenuScroll">
+            <ul class="sidebar-menu">
+              <li class="active current-page">
+                <a href="main_dashboard.html">
+                  <i class="ri-home-6-line"></i>
+                  <span class="menu-text">Dashboard</span>
+                </a>
+              </li>
+              <li class="treeview">
+                <a href="#!">
+                  <i class="ri-bar-chart-line"></i>
+                  <span class="menu-text">Rports</span>
+                </a>
+                <ul class="treeview-menu">
+                  <li>
+                    <a href="historical_log.html">Historical Reports</a>
+                  </li>
+                  <li>
+                    <a href="alert_log_report.html">Alert Report</a>
+                  </li>
+                </ul>
+              </li>
+            </ul>
+          </div>
+          <!-- Sidebar menu ends -->
         </nav>
         <!-- Sidebar wrapper ends -->
 
@@ -368,7 +394,7 @@
                 <div class="accordion mb-3" id="single_well_detailsAccordian">
                   <div class="accordion-item">
                     <h2 class="accordion-header" id="singlewelldetailsaccordians">
-                      <button class="accordion-button" type="button" data-bs-toggle="collapse"
+                      <button class="accordion-button" onclick="Get_Graph()" type="button" data-bs-toggle="collapse"
                         data-bs-target="#singlewell_details_accordians" aria-expanded="true"
                         aria-controls="singlewell_details_accordians">
                         <div class="name-tilte">
@@ -420,7 +446,7 @@
                 <div class="accordion mb-3" id="alert_log_well_detailsAccordian">
                   <div class="accordion-item">
                     <h2 class="accordion-header" id="alertlogwelldetailsaccordians">
-                      <button class="accordion-button" type="button" data-bs-toggle="collapse"
+                      <button class="accordion-button" onclick="alert_log_mbl()" type="button" data-bs-toggle="collapse"
                         data-bs-target="#alert_log_details_accordians" aria-expanded="true"
                         aria-controls="alert_log_details_accordians">
                         <div class="name-tilte">
@@ -461,7 +487,7 @@
                 <div class="accordion mb-3" id="wellasset_gis_map_accordian">
                   <div class="accordion-item">
                     <h2 class="accordion-header" id="wellassetGIS_map_accordians">
-                      <button class="accordion-button" type="button" data-bs-toggle="collapse"
+                      <button class="accordion-button" onclick="initMap_mbl()" type="button" data-bs-toggle="collapse"
                         data-bs-target="#wellasset_gisMapAccordian" aria-expanded="true"
                         aria-controls="wellasset_gisMapAccordian">
                         <div class="name-tilte">
@@ -635,10 +661,6 @@
     <script type="text/javascript" src="inc/paths.js"></script>
 
     <script type="text/javascript">
-      $(document).ready(function () {
-        $("#sidebar").load("inc/sidebarmenu.html");
-      });
-
       $(document).ready(function() 
       {
         $(".select2").select2();
@@ -1470,9 +1492,9 @@
                   get_single_well_details_mbl();
                   getPresureDetails();
                   graph_date_time();
-                  Get_Graph();
-                  alert_log_mbl();
-                  initMap_mbl();
+                  // Get_Graph();
+                  // alert_log_mbl();
+                  // initMap_mbl();
               } else {
                   console.warn("Well ID is still null after delay.");
               }

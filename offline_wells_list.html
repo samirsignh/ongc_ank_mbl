@@ -108,7 +108,33 @@
 
         <!-- Sidebar wrapper starts -->
         <nav id="sidebar" class="sidebar-wrapper">
-          
+
+          <!-- Sidebar menu starts -->
+          <div class="sidebarMenuScroll">
+            <ul class="sidebar-menu">
+              <li class="active current-page">
+                <a href="main_dashboard.html">
+                  <i class="ri-home-6-line"></i>
+                  <span class="menu-text">Dashboard</span>
+                </a>
+              </li>
+              <li class="treeview">
+                <a href="#!">
+                  <i class="ri-bar-chart-line"></i>
+                  <span class="menu-text">Rports</span>
+                </a>
+                <ul class="treeview-menu">
+                  <li>
+                    <a href="historical_log.html">Historical Reports</a>
+                  </li>
+                  <li>
+                    <a href="alert_log_report.html">Alert Report</a>
+                  </li>
+                </ul>
+              </li>
+            </ul>
+          </div>
+          <!-- Sidebar menu ends -->
         </nav>
         <!-- Sidebar wrapper ends -->
 
@@ -230,12 +256,6 @@
     <!-- Custom JS files -->
     <script src="assets/js/custom.js"></script>
     <!-- <script src="inc/sidebarmenu.html"></script> -->
-
-    <script type="text/javascript">
-      $(document).ready(function () {
-        $("#sidebar").load("inc/sidebarmenu.html");
-      });
-    </script>
 
     <script type="text/javascript">
       
