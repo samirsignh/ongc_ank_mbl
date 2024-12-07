@@ -58,6 +58,9 @@
         margin-bottom: 10px;
         padding: 3px 5px;
       }
+      .icon-box{
+        box-shadow: inset 1.5px 1.5px 0px rgb(255 255 255 / 0%), inset -1.5px -1.5px 0px rgba(0, 0, 0, .1);
+      }
     </style>
 
     <!-- *************
@@ -190,27 +193,27 @@
                   <div class="card-body filter-card">
                     <div class="m-0">
                       <label class="form-label" for="abc4"><strong>Area</strong></label>
-                      <select class="form-control select2" onchange="getSiteList()" id="area_id" name="area_id" aria-label="Default select example">
+                      <select class="form-control select2" onchange="getSiteList(); get_dashboard_counts()" id="area_id" name="area_id" aria-label="Default select example">
                         
                       </select>
                     </div>
 
                     <div class="m-0 pt-2">
                       <label class="form-label" for="abc4"><strong>Installation/Site</strong></label>
-                      <select class="form-control select2" onchange="getWellNames();" id="site_id" name="site_id" aria-label="Default select example">
+                      <select class="form-control select2" onchange="getWellNames(); get_dashboard_counts();" id="site_id" name="site_id" aria-label="Default select example">
                         
                       </select>
                     </div>
 
                     <div class="m-0 pt-2">
                       <label class="form-label" for="abc4"><strong>Well Type</strong></label>
-                      <select class="form-control select2" id="well_type" name="well_type" aria-label="Default select example">
+                      <select class="form-control select2" onchange="get_dashboard_counts()" id="well_type" name="well_type" aria-label="Default select example">
                       </select>
                     </div>
 
                     <div class="m-0 pt-2">
                       <label class="form-label" for="abc4"><strong>Well Name</strong></label>
-                      <select class="form-control select2" id="well_id" name="well_id" aria-label="Default select example">
+                      <select class="form-control select2" onchange="get_dashboard_counts()" id="well_id" name="well_id" aria-label="Default select example">
                       </select>
                     </div>
 

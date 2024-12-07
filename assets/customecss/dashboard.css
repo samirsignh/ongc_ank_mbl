@@ -1,3 +1,10 @@
+.app-hero-header{
+  background: #ffffff;
+}
+.text-primary span{
+      color: rgb(15 17 21) !important;
+}
+
 .filter-card{
   position: relative;
   border-top-left-radius: 5px;

@@ -126,14 +126,14 @@
               <li class="treeview">
                 <a href="#!">
                   <i class="ri-bar-chart-line"></i>
-                  <span class="menu-text">Rports</span>
+                  <span class="menu-text">Reports</span>
                 </a>
                 <ul class="treeview-menu">
                   <li>
-                    <a href="historical_log.html">Historical Reports</a>
+                    <a href="historical_log.html">Historical </a>
                   </li>
                   <li>
-                    <a href="alert_log_report.html">Alert Report</a>
+                    <a href="alert_log_report.html">Historical Log Report</a>
                   </li>
                   <li>
                     <a href="historical_graph.html">Historical Graph Report</a>
@@ -159,10 +159,10 @@
                 <a href="#">Home</a>
               </li>
               <li class="breadcrumb-item text-primary" aria-current="page">
-                Single Dashboard
+                Reports
               </li>
               <li class="breadcrumb-item text-primary" aria-current="page">
-                Historical Report
+                Historical Graph Report
               </li>
             </ol>
             <!-- Breadcrumb ends -->
@@ -180,7 +180,7 @@
                   <div class="card-header" style="margin-bottom: -25px;">
                     <h5 class="card-title" style="font-family: sans-serif;font-weight: 700;">
                      Historical Report
-                      <a href="main_dashboard.html" class="btn btn-sm btn-primary" style="float: right;">Back</a>
+                      <a href="single_well_dashboard.html" class="btn btn-sm btn-primary" style="float: right;">Back</a>
                     </h5>
                   </div>
                   <div class="card-body">
@@ -188,22 +188,44 @@
                       <div class="row">
                         <div class="col-md-12 pt-1">
                           <div class="form-group">
-                            <label><strong>Well Name</strong></label>
-                            <select class="form-control select2" onchange="get_historical_report_list()" name="well_id" id="well_id">
+                            <label><strong>Well Type</strong></label>
+                            <select class="form-control select2" onchange="getWellName_list()" name="well_type" id="well_type">
                               
                             </select>
                           </div>
                         </div>
                         <div class="col-md-12 pt-1">
                           <div class="form-group">
+                            <label><strong>Well Name</strong></label>
+                            <select class="form-control select2" onchange="GetGraph()" name="well_id" id="well_id">
+                              
+                            </select>
+                          </div>
+                        </div>
+                        <div class="col-md-12 pt-1">
+                          <div class="form-group">
+                            <label><strong>Report Type</strong></label>
+                            <select class="form-control select2" onchange="GetGraph()" name="report_type" id="report_type">
+                              <option value="">-select-</option>
+                              <option value="1">CHP</option>
+                              <option value="2">THP</option>
+                              <option value="3">ABP</option>
+                              <option value="4">GIP</option>
+                              <option value="5">THT</option>
+                              <option value="6">Battery</option>
+                            </select>
+                          </div>
+                        </div>
+                        <div class="col-md-12 pt-1">
+                          <div class="form-group">
                             <label><strong>From Date</strong></label>
-                            <input type="date" onchange="get_historical_report_list(); get_installation_date()" name="from_date" id="from_date" class="form-control">
+                            <input type="date" name="from_date" onchange="GetGraph()" id="from_date" class="form-control">
                           </div>
                         </div>
                         <div class="col-md-12 pt-1">
                           <div class="form-group">
                             <label><strong>To Date</strong></label>
-                            <input type="date" onchange="get_historical_report_list(); get_installation_date()" name="to_date" id="to_date" class="form-control">
+                            <input type="date" name="to_date" onchange="GetGraph()" id="to_date" class="form-control">
                           </div>
                         </div>
                       </div>
@@ -217,41 +239,11 @@
               <div class="col-sm-12">
                 <div class="card mb-3">
                   <div class="card-body" style="padding: 8px 8px;">
-                    <!-- Table starts -->
-                    <div class="table-outer">
-                      <div class="table-responsive">
-                        <table class="table m-0 align-middle">
-                          <thead>
-                            <tr>
-                              <th class="pb-0" colspan="15"><h5 class="text-center" style="font-size: 17px !important;">IOT Based Real Time Well Monitoring System ONGC,Ankleshwar Asset</h5></th>
-                            </tr>
-                            <tr>
-                              <th colspan="15"><h6 class="text-center">Device Historical Report as on <span id="report_from_date"></span> To <span id="report_to_date"></span></h6></th>
-                            </tr>
-                            <tr>
-                              <th>#</th>
-                              <th>Well Name</th>
-                              <th>IMEI No</th>
-                              <th>Last Log D/T</th>
-                              <th>GIP</th>
-                              <th>CHP</th>
-                              <th>THP</th>
-                              <th>ABP</th>
-                              <th>THT</th>
-                              <th>Battery(V)</th>
-                              <th>SF1-solenide</th>
-                              <th>Target Time</th>
-                              <th>On Time</th>
-                              <th>OFf Time</th>
-                            </tr>
-                          </thead>
-                          <tbody id="historical_log_report_table">
-                            
-                          </tbody>
-                        </table>
-                      </div>
+                    <div id="processing_message" style="display: none;">
+                      <img src="assets/loader_img.svg" class="loader-img" alt="Loader" style="height:200px;width:100px;align-items: center;">
                     </div>
-                    <!-- Table ends -->
+                    <span style="color: black;" id="selected_field"></span>
+                    <canvas id="speedChart" width="600" height="400"></canvas>
                   </div>
                 </div>
               </div>
@@ -299,18 +291,48 @@
     <!-- <script src="inc/sidebarmenu.html"></script> -->
 
     <script type="text/javascript">
+
+      let sessionUserData = localStorage.getItem('userData');
+      let userData = JSON.parse(sessionUserData);
+
       $(document).ready(function(){
+
         $(".select2").select2();
 
-        let sessionUserData = localStorage.getItem('userData');
-        let userData = JSON.parse(sessionUserData);
+        $.ajax({
+            url: api_path + "Master/get_well_type_List",
+            type: "POST",
+            data: {
+                company_id: userData.company_id,
+                user_id: userData.user_id,
+            },
+            headers: {
+                "x-api-key": "Qm0Lkq9m8JRiGPxO56HNmD7pIVSGzJje"
+            },
+            success:(resp)=>{
+              if(resp.response_code == 200){
+                if(resp.data.length > 0){
+                  $("#well_type").html(`<option value="">-select-</option>`);
+                  $.each(resp.data, (i,v)=>{
+                      $("#well_type").append(`<option value="${v.id}">${v.well_type_name}</option>`);
+                  });
+                }else{
+                  $("#well_type").html(`<option value="">-select-</option>`)
+                }
+              }
+            }
+        });
 
+      });
+
+      const getWellName_list = ()=>{
         $.ajax({
             url: api_path + "Area_Dashboard/WellList_forDashboard",
             type: "POST",
             data: {
                 company_id: userData.company_id,
                 user_id: userData.user_id,
+                well_type: $("#well_type").val(),
             },
             headers: {
                 "x-api-key": "Qm0Lkq9m8JRiGPxO56HNmD7pIVSGzJje"
@@ -328,8 +350,7 @@
               }
             }
         });
-
-      });
+      }
 
       const graph_date_time = ()=>{
           const now = new Date();
@@ -379,53 +400,199 @@
             }
       }
 
-      const get_historical_report_list = ()=>{
-        $("#historical_log_report_table").html(`<tr><td colspan="15" style="text-align:center;color:grey;"> Please wait......loading!</td></tr>`);
-        $.ajax({
-            url: api_path + "Historical_Data/Historial_data_Mis_Report",
-            type: "POST",
-            data: {
-                well_id: $("#well_id").val(),
-                from_date: $("#from_date").val(),
-                to_date: $("#to_date").val(),
-            },
-            headers: {
-                "x-api-key": "Qm0Lkq9m8JRiGPxO56HNmD7pIVSGzJje"
-            },
-            success:(resp)=>{
-              if(resp.response_code == 200){
-                if(resp.data.length > 0){
-                  $("#historical_log_report_table").html(``);
-                  $.each(resp.data, (i,v) =>{
-                      var lastDateTime  = v.Log_Date_Time != null ? moment(v.Log_Date_Time).format('DD-MM-YYYY h:mm:ss a') :"-";
-                      $("#historical_log_report_table").append(`<tr>
-                              <td>${i + 1}</td>
-                              <td>${v.well_name ? v.well_name : "-"}</td>
-                              <td>${v.imei_no ? v.imei_no : "-"}</td>
-                              <td>${lastDateTime}</td>
-                              <td>${v.PS_1_GIP ? v.PS_1_GIP : "-"}</td>
-                              <td>${v.PS_2_CHP ? v.PS_2_CHP : "-"}</td>
-                              <td>${v.PS_3_THP ? v.PS_3_THP : "-"}</td>
-                              <td>${v.PS_4_ABP ? v.PS_4_ABP : "-"}</td>
-                              <td>${v.FLTP_1_Temp ? v.FLTP_1_Temp : "-"}</td>
-                              <td>${v.Battery_Voltage ? v.Battery_Voltage : "-"}</td>
-                              <td>${v.SF_1_solenide ? v.SF_1_solenide : "-"}</td>
-                              <td>${v.TRGT_Time ? v.TRGT_Time : "-"}</td>
-                              <td>${v.ON_Time ? v.ON_Time : "-"}</td>
-                              <td>${v.Off_Time ? v.Off_Time : "-"}</td>
-                            </tr>`);
-                  });
-                }else{
-                  $("#historical_log_report_table").html(`<tr><td colspan="15" style="text-align:center;color:red;"> No record found!</td></tr>`);
+  function GetGraph() {
+
+    var selectedOption = $("#alert_type").val(); // Corrected usage
+    var processingMessage = document.getElementById("processing_message");
+
+    if (!processingMessage) {
+        console.error("Processing message element was not found.");
+        return;
+    }
+
+    processingMessage.style.display = "block";
+
+    var well_ids = $('#well_id').val();
+    var well_type = $('#well_type').val();
+    var from_date = $('#from_date').val();
+    var to_date = $('#to_date').val();
+
+    var url = '';
+    var selectedText = ''; // Corrected variable name
+    switch (selectedOption) {
+        case "1":
+            selectedText = 'CHP';
+            url = api_path + 'Historical_report_c/get_graph_histrorical';
+            break;
+        case "2":
+            selectedText = 'THP';
+            url = api_path + 'Historical_report_c/get_graph_histrorical';
+            break;
+        case "3":
+            selectedText = 'ABP';
+            url = api_path + 'Historical_report_c/get_graph_histrorical';
+            break;
+        case "4":
+            selectedText = 'GIP';
+            url = api_path + 'Historical_report_c/get_graph_histrorical';
+            break;
+        case "5":
+            selectedText = 'THT';
+            url = api_path + 'Historical_report_c/get_graph_histrorical';
+            break;
+        case "6":
+            selectedText = 'Battery';
+            url = api_path + 'Historical_report_c/get_graph_histrorical';
+            break;
+        default:
+            // console.error("Invalid selection option");
+            processingMessage.style.display = "none";
+            return;
+    }
+
+    $.ajax({
+        url: url,
+        type: 'POST',
+        data: {
+            well_id: well_ids,
+            well_type: well_type,
+            from_date: from_date,
+            to_date: to_date,
+            graph_type: selectedOption
+        },
+        success: function(res) {
+            console.log(res, "graph data");
+            processingMessage.style.display = "none";
+
+            try {
+                if (typeof res === 'string') {
+                    res = JSON.parse(res);
                 }
-              }
+            } catch (e) {
+                console.error("Error parsing JSON response:", e);
+                return;
             }
-        });
-      }
+
+            if (!res || !res.data) {
+                console.error('API response is missing "data" property:', res);
+                return;
+            }
+
+            var datasets = [];
+            var labels = [];
+            var colors = ["#FF5733", "#33FF57", "#3357FF", "#FF33A1", "#FF8C33"];
+
+            Object.keys(res.data).forEach(function(wellId, index) {
+                var wellData;
+                switch (selectedOption) {
+                    case "1":
+                        wellData = res.data[wellId].output_chp.output_chp;
+                        break;
+                    case "2":
+                        wellData = res.data[wellId].output_thp.output_thp;
+                        break;
+                    case "3":
+                        wellData = res.data[wellId].output_abp.output_abp;
+                        break;
+                    case "4":
+                        wellData = res.data[wellId].output_gip.output_gip;
+                        break;
+                    case "5":
+                        wellData = res.data[wellId].output_tht.output_tht;
+                        break;
+                    case "6":
+                        wellData = res.data[wellId].output_battery.output_battery;
+                        break;
+                }
+
+                if (!wellData || wellData.length === 0 || !wellData[0].well_name) {
+                    console.warn(`No data found for well ID: ${wellId}`);
+                    return;
+                }
+
+                var dataPoints = wellData.map(function(point) {
+                    return {
+                        x: new Date(point.x).getTime(),
+                        y: parseFloat(point.y)
+                    };
+                });
+
+                labels = wellData.map(function(point) {
+                    return point.x;
+                });
+
+                var color = colors[index] || getRandomColor();
+
+                datasets.push({
+                    label: wellData[0].well_name + " - " + selectedText,
+                    data: dataPoints,
+                    lineTension: 0,
+                    fill: false,
+                    borderColor: color
+                });
+            });
+
+            updateLineChart(datasets, labels);
+        },
+        error: function(xhr, status, error) {
+            processingMessage.style.display = "none";
+            console.error('AJAX Error: ', error);
+        }
+    });
+}
+
+function updateLineChart(datasets, labels) {
+    var speedCanvas = document.getElementById("speedChart");
+
+    if (window.lineChart) {
+        window.lineChart.destroy();
+    }
+
+    window.lineChart = new Chart(speedCanvas, {
+        type: 'line',
+        data: {
+            labels: labels,
+            datasets: datasets
+        },
+        options: {
+            plugins: {
+                legend: {
+                    display: true,
+                    position: 'top',
+                    labels: {
+                        boxWidth: 80,
+                        color: 'black'
+                    }
+                }
+            },
+            scales: {
+                x: {
+                    type: 'time',
+                    time: {
+                        displayFormats: {
+                            minute: 'HH:mm:ss',
+                            hour: 'HH:mm'
+                        }
+                    }
+                }
+            }
+        }
+    });
+}
+
+function getRandomColor() {
+    var letters = '0123456789ABCDEF';
+    var color = '#';
+    for (var i = 0; i < 6; i++) {
+        color += letters[Math.floor(Math.random() * 16)];
+    }
+    return color;
+}
+
 
       graph_date_time();
       get_installation_date();
-      get_historical_report_list();
+      // GetGraph();
     </script>
 
   </body>
