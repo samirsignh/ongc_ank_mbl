@@ -563,28 +563,41 @@
 
       let sessionUserData = localStorage.getItem('userData');
       let userData = JSON.parse(sessionUserData);
-      // console.log(userData);
-      $(document).ready(function() {
+
+      const get_area_list_data = ()=>{
         let company_id = userData.company_id;
         let assets_id = userData.assets_id;
-        // area list section
+        let session_area_id = userData.area_id;
         $.ajax({
             url: api_path + "Area_master/AreaList",
             type: "POST",
-            data:{company_id:company_id, assets_id:assets_id},
+            data:{company_id:company_id, assets_id:assets_id,user_id: userData.user_member_id},
             headers: { 
                 "x-api-key": "Qm0Lkq9m8JRiGPxO56HNmD7pIVSGzJje"
             },
             success:(resp)=>{
               if(resp.response_code == 200){
-                $("#area_id").html(`<option value="">-select-</option>`);
-                $.each(resp.data, (i,v)=>{
-                    $("#area_id").append(`<option value="${v.id}">${v.area_name}</option>`);
-                });
+                if(userData.user_type == 3 && userData.role_type == 2){
+                  $.each(resp.data, (i,v)=>{
+                      let selected = v.id == session_area_id ? "selected" : "";
+                      $("#area_id").html(`<option value="${v.id}"${selected}>${v.area_name}</option>`);
+                  });
+                  getSiteList();
+                  get_dashboard_counts();
+                }else{
+                  $("#area_id").html(`<option value="">-select-</option>`);
+                  $.each(resp.data, (i,v)=>{
+                      $("#area_id").append(`<option value="${v.id}">${v.area_name}</option>`);
+                  });
+                }
               }
             }
         });
+      }
 
+      $(document).ready(function() {
+        let company_id = userData.company_id;
+        let assets_id = userData.assets_id;
         // well type list section 
         $.ajax({
             url: api_path + "Master/get_well_type_List",
@@ -609,7 +622,6 @@
         let company_id = userData.company_id;
         let assets_id = userData.assets_id;
         let area_id = $("#area_id").val();
-
         $.ajax({
             url: api_path + "Well_site_master/Well_SiteList",
             type: "POST",
@@ -901,7 +913,13 @@
       $(document).ready(function() {
         let sessionUserData = localStorage.getItem('userData');
         let userData = JSON.parse(sessionUserData);
-        $("#logedin_user").html(userData.company_name);
+        if(userData.user_type == 1){
+          $("#logedin_user").html("Super Admin");
+        }else if(userData.user_type == 2){
+          $("#logedin_user").html(userData.company_name);
+        }else if(userData.user_type == 3){
+          $("#logedin_user").html(userData.user_full_name);
+        }
       });
 
       const logoutSession = ()=>{
@@ -933,6 +951,7 @@
       };
 
       get_dashboard_counts();
+      get_area_list_data();
       // get_dashboard_well_details();
       // initMap();
     </script>

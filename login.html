@@ -67,7 +67,8 @@
                     <input type="password" class="login__input" name="auth_password" id="auth_password" placeholder="Password" />
                 </div>
                 <button class="button login__submit" onclick="authenticateUser()" type="button">
-                    <span class="button__text">Login</span>
+                    <span class="button__text" id="loginbtns">Login</span>
+                    <span id="spineer" style="display: none;"><img height="40" src="assets/spin.gif"></span>
                 </button>
             </form>
           </div>
@@ -118,15 +119,19 @@
               "x-api-key": "Qm0Lkq9m8JRiGPxO56HNmD7pIVSGzJje"
           },
           success:(resp)=>{
-            console.log(resp);
+            // console.log(resp);
             if(resp.response_code == 200){
               if(resp.data['user_type'] == 2){
+                $("#loginbtns").hide();
+                $("#spineer").show();
                 localStorage.setItem('userData',JSON.stringify(resp.data));
                 setTimeout(()=>{
                     window.location.href="main_dashboard.html";
                 },1000);
                 toastr.success("Login Successfull");
               }else if(resp.data['user_type'] == 3){
+                $("#loginbtns").hide();
+                $("#spineer").show();
                 localStorage.setItem('userData',JSON.stringify(resp.data));
                 setTimeout(()=>{
                     window.location.href="main_dashboard.html";
