@@ -299,11 +299,14 @@
     <!-- <script src="inc/sidebarmenu.html"></script> -->
 
     <script type="text/javascript">
+
+      let sessionUserData = localStorage.getItem('userData');
+      let userData = JSON.parse(sessionUserData);
+
+      let historical_well_id = localStorage.getItem('historicalWellId');
+
       $(document).ready(function(){
         $(".select2").select2();
-
-        let sessionUserData = localStorage.getItem('userData');
-        let userData = JSON.parse(sessionUserData);
 
         $.ajax({
             url: api_path + "Area_Dashboard/WellList_forDashboard",
@@ -320,12 +323,14 @@
                 if(resp.data.length > 0){
                   $("#well_id").html(`<option value="">-select-</option>`);
                   $.each(resp.data, (i,v)=>{
-                      $("#well_id").append(`<option value="${v.well_id}">${v.well_name}</option>`);
+                      let selected = v.well_id == historical_well_id ? "selected" : "";
+                      $("#well_id").append(`<option value="${v.well_id}" ${selected}>${v.well_name}</option>`);
                   });
                 }else{
                   $("#well_id").html(`<option value="">-select-</option>`)
                 }
               }
+              get_historical_report_list();
             }
         });
 
@@ -380,6 +385,7 @@
       }
 
       const get_historical_report_list = ()=>{
+
         $("#historical_log_report_table").html(`<tr><td colspan="15" style="text-align:center;color:grey;"> Please wait......loading!</td></tr>`);
         $.ajax({
             url: api_path + "Historical_Data/Historial_data_Mis_Report",
@@ -388,6 +394,7 @@
                 well_id: $("#well_id").val(),
                 from_date: $("#from_date").val(),
                 to_date: $("#to_date").val(),
+                user_id: userData.user_member_id,
             },
             headers: {
                 "x-api-key": "Qm0Lkq9m8JRiGPxO56HNmD7pIVSGzJje"
@@ -425,7 +432,6 @@
 
       graph_date_time();
       get_installation_date();
-      get_historical_report_list();
     </script>
 
   </body>

@@ -247,6 +247,7 @@
     <!-- *************
 			************ Vendor Js Files *************
 		************* -->
+    <script type="text/javascript" src="inc/paths.js"></script>
 
     <!-- Overlay Scroll JS -->
     <script src="assets/vendor/overlay-scroll/jquery.overlayScrollbars.min.js"></script>
@@ -275,13 +276,13 @@
                   well_type: wellIds?.well_type,
                   well_id: wellIds?.well_id,
                   assets_id: userData.assets_id,
-                  user_id: userData.user_id,
+                  user_id: userData.user_member_id,
               },
               headers: {
                   "x-api-key": "Qm0Lkq9m8JRiGPxO56HNmD7pIVSGzJje"
               },
               success: function (resp) {
-                  console.log("Response", resp);
+                  $("#non_flowing_wells_tables").html(`<tr><td colspan="18"> Please wait.......loading!</td></tr>`);
                   if(resp.response_code == 200){
                     if(resp.data.length > 0){
                       $("#non_flowing_wells_tables").html(``);
@@ -328,6 +329,8 @@
         localStorage.setItem('setWellSiteId',JSON.stringify(well_siteId));
         window.location.href = 'single_well_dashboard.html';
       }
+
+      getNonFlowingWellsList();
 
     </script>
 

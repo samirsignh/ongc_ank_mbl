@@ -134,7 +134,7 @@
                 </a>
                 <ul class="treeview-menu">
                   <li>
-                    <a href="historical_log.html">Historical Reports</a>
+                    <a href="historical_graph.html">Historical Reports</a>
                   </li>
                   <li>
                     <a href="alert_log_report.html">Alert Report</a>
@@ -383,8 +383,8 @@
                       <div class="single-well-action-buttons pt-2">
                         <!-- <a href="#" data-bs-toggle="offcanvas" data-bs-target="#update_ietcc" aria-controls="update_ietcc" class="btn btn-outline-primary"> Update IETCC </a>
                         <a href="#" data-bs-toggle="offcanvas" data-bs-target="#flag_well" aria-controls="flag_well" class="btn btn-outline-primary"> Flag Well </a> -->
-                        <a href="historical_log.html" class="btn btn-outline-primary"> Historical Log </a>
-                        <a href="alert_log_report.html" class="btn btn-outline-primary"> Alert Log </a>
+                        <a href="javascript:;" onclick="gotoLogReport('hostorical')" class="btn btn-outline-primary"> Historical Log </a>
+                        <a href="javascript:;" onclick="gotoLogReport('alert')" class="btn btn-outline-primary"> Alert Log </a>
                       </div>
                     </div>
                   </div>
@@ -1490,6 +1490,25 @@
                   }
                 }
           });
+      }
+
+      // historical log report section 
+      const gotoLogReport = (logType)=>{
+        let well_id = $("#well_id").val();
+        let well_type = $("#well_type").val();
+
+        if(logType == "hostorical"){
+          localStorage.setItem('historicalWellId',well_id);
+          window.location.href = 'historical_log.html';
+        }else if(logType == "alert"){
+          let alertSession = [];
+          alertSession = {
+            well_id: well_id,
+            well_type: well_type,
+          };
+          localStorage.setItem('alertSessionIds',JSON.stringify(alertSession));
+          window.location.href = 'alert_log_report.html';
+        }
       }
 
       get_url_well_id_moble();

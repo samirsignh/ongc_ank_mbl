@@ -324,7 +324,13 @@
 
       let sessionUserData = localStorage.getItem('userData');
       let userData = JSON.parse(sessionUserData);
-      
+
+      let alertLog_id = localStorage.getItem('alertSessionIds');
+      let alertData = JSON.parse(alertLog_id);
+
+      let wellTypeId = alertData.well_type;
+      let wellId = alertData.well_id;
+
       $(document).ready(function(){
         $(".select2").select2();
       });
@@ -360,12 +366,14 @@
                 if(resp.data.length > 0){
                   $("#well_type").html(`<option value="">-select-</option>`);
                   $.each(resp.data, (i,v)=>{
-                      $("#well_type").append(`<option value="${v.id}">${v.well_type_name}</option>`);
+                      let selected = v.id == wellTypeId ? "selected" : "";
+                      $("#well_type").append(`<option value="${v.id}" ${selected}>${v.well_type_name}</option>`);
                   });
                 }else{
                   $("#well_type").html(`<option value="">-select-</option>`)
                 }
               }
+              getWellNameList();
             }
         });
       }
@@ -378,6 +386,7 @@
                 company_id: userData.company_id,
                 user_id: userData.user_id,
                 well_type: $("#well_type").val(),
+                user_id: userData.user_member_id,
             },
             headers: {
                 "x-api-key": "Qm0Lkq9m8JRiGPxO56HNmD7pIVSGzJje"
@@ -387,7 +396,8 @@
                 if(resp.data.length > 0){
                   $("#well_id").html(`<option value="">-select-</option>`);
                   $.each(resp.data, (i,v)=>{
-                      $("#well_id").append(`<option value="${v.well_id}">${v.well_name}</option>`);
+                      let selected = v.well_id == wellId ? "selected" : "";
+                      $("#well_id").append(`<option value="${v.well_id}" ${selected}>${v.well_name}</option>`);
                   });
                 }else{
                   $("#well_id").html(`<option value="">-select-</option>`)
