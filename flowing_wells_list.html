@@ -88,10 +88,10 @@
             </a>
             <div class="dropdown-menu dropdown-menu-end shadow-lg">
               <div class="px-3 py-2">
-                <h6 class="m-0">James Bruton</h6>
+                <h6 class="m-0" id="logedin_user"></h6>
               </div>
               <div class="mx-3 my-2 d-grid">
-                <a href="login.html" class="btn btn-danger">Logout</a>
+                <a href="javascript:;" onclick="logoutSession()" class="btn btn-danger">Logout</a>
               </div>
             </div>
           </div>
@@ -326,6 +326,23 @@
           };
           localStorage.setItem('setWellSiteId',JSON.stringify(well_siteId));
           window.location.href = 'single_well_dashboard.html';
+        }
+
+        $(document).ready(function() {
+          let sessionUserData = localStorage.getItem('userData');
+          let userData = JSON.parse(sessionUserData);
+          if(userData.user_type == 1){
+            $("#logedin_user").html("Super Admin");
+          }else if(userData.user_type == 2){
+            $("#logedin_user").html(userData.company_name);
+          }else if(userData.user_type == 3){
+            $("#logedin_user").html(userData.user_full_name);
+          }
+        });
+
+        const logoutSession = ()=>{
+          localStorage.clear()
+          window.location.href = 'login.html';
         }
 
         getFlowingWellsList();
