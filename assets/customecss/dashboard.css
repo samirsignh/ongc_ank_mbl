@@ -98,7 +98,7 @@
 }
 .card-indicator-section .box1{
   border-radius: 15px;
-  background-color: #008000ed;
+  background-color: #0ebb13;
   height: 20px;
   width: 20px;
 }
@@ -109,13 +109,13 @@
 }
 .card-indicator-section .box2{
   border-radius: 15px;
-  background-color: #ff5a39;
+  background-color: #394f62;
   height: 20px;
   width: 20px;
 }
 .card-indicator-section .box3{
   border-radius: 15px;
-  background-color: #ffd439;
+  background-color: #ff5a39;
   height: 20px;
   width: 20px;
 }

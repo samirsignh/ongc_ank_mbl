@@ -176,9 +176,6 @@
                     <h5 class="card-title" style="font-family: sans-serif;font-weight: 700;">
                      CGL Wells List
                       <a href="main_dashboard.html" class="btn btn-sm btn-primary" style="float: right;">Back</a>
-                      <a href="javascript:;" class="download-btns" onclick="exportCGLWellReport()" style="float: right;">
-                          <i class="fa-solid fa-download"></i>
-                      </a>
                     </h5>
                   </div>
                   <div class="card-body">
@@ -345,37 +342,6 @@
             }
         });
       }
-
-      const exportCGLWellReport = () => {
-          let table = document.getElementById("cgl_wells_tables"); // Replace with your table's ID
-          let rows = table.querySelectorAll("tr");
-          let csvContent = [];
-
-          // Iterate over rows to extract data
-          rows.forEach((row) => {
-              let cols = row.querySelectorAll("th, td"); // Include table headers and data
-              let rowData = [];
-              cols.forEach((col) => rowData.push(col.innerText.trim())); // Get cell text
-              csvContent.push(rowData.join(",")); // Join cell data with commas
-          });
-
-          // Convert array to CSV string
-          let csvString = csvContent.join("\n");
-
-          // Create a Blob from the CSV
-          let blob = new Blob([csvString], { type: "text/csv" });
-
-          // Create a download link
-          let link = document.createElement("a");
-          link.href = URL.createObjectURL(blob);
-          link.download = "CGL_Wells_Report.csv"; // Filename
-          link.style.display = "none";
-
-          // Append link to body and trigger click
-          document.body.appendChild(link);
-          link.click();
-          document.body.removeChild(link);
-      };
 
       const cgl_to_single_dashboard_details = (datas)=>{
         let [well_id, site_id] = datas.split("|");

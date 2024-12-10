@@ -180,7 +180,7 @@
                   <div class="card-header" style="margin-bottom: -25px;">
                     <h5 class="card-title" style="font-family: sans-serif;font-weight: 700;">
                      Historical Report
-                      <a href="main_dashboard.html" class="btn btn-sm btn-primary" style="float: right;">Back</a>
+                     <a href="main_dashboard.html" class="btn btn-sm btn-primary" style="float: right;">Back</a>
                     </h5>
                   </div>
                   <div class="card-body">
@@ -398,11 +398,11 @@
                   $("#historical_log_report_table").html(``);
                   $.each(resp.data, (i,v) =>{
                       var lastDateTime  = v.Log_Date_Time != null ? moment(v.Log_Date_Time).format('DD-MM-YYYY h:mm:ss a') :"-";
-                      $("#historical_log_report_table").append(`<tr>
+                      $("#historical_log_report_table").append(`<tr style="font-size: 11px;">
                               <td>${i + 1}</td>
                               <td>${v.well_name ? v.well_name : "-"}</td>
                               <td>${v.imei_no ? v.imei_no : "-"}</td>
-                              <td>${lastDateTime}</td>
+                              <td style="min-width: 135px;">${lastDateTime}</td>
                               <td>${v.PS_1_GIP ? v.PS_1_GIP : "-"}</td>
                               <td>${v.PS_2_CHP ? v.PS_2_CHP : "-"}</td>
                               <td>${v.PS_3_THP ? v.PS_3_THP : "-"}</td>

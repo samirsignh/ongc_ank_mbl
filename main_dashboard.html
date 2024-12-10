@@ -521,7 +521,7 @@
 		************* -->
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>  
 
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyA-_rv9bXIPPVsYV0TQ5NxUMg96WdP9_LM"></script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBKoAgLoslTEUCNabLj5H5jLVdWFD2WhK8"></script>
 
     <script src="assets/local/select2/js/select2.min.js"></script>
 
@@ -563,7 +563,7 @@
 
       let sessionUserData = localStorage.getItem('userData');
       let userData = JSON.parse(sessionUserData);
-
+console.log('userSessionData',userData);
       const get_area_list_data = ()=>{
         let company_id = userData.company_id;
         let assets_id = userData.assets_id;
@@ -649,7 +649,7 @@
         $.ajax({
             url: api_path + "Well_master/Well_List",
             type: "POST",
-            data: {company_id:company_id,assets_id:assets_id,area_id:area_id,site_id:site_id},
+            data: {company_id:company_id,assets_id:assets_id,area_id:area_id,site_id:site_id,user_id:userData.user_member_id},
             headers: { 
                 "x-api-key": "Qm0Lkq9m8JRiGPxO56HNmD7pIVSGzJje"
             },
@@ -746,8 +746,8 @@
                           let flag_status = v.flag_status;
 
                           let flowingWells = `<a href="javascript:;" onclick="single_dashboard_details(this.id)" id="${v.well_id}|${v.site_id}" class="btn btn-success">${v.well_name}</a>`;
-                          let offlinewells = `<a href="javascript:;" onclick="single_dashboard_details(this.id)" id="${v.well_id}|${v.site_id}" class="btn btn-danger">${v.well_name}</a>`;
-                          let nonFlowingWells = `<a href="javascript:;" onclick="single_dashboard_details(this.id)" id="${v.well_id}|${v.site_id}" class="btn btn-warning">${v.well_name}</a>`;
+                          let offlinewells = `<a href="javascript:;" onclick="single_dashboard_details(this.id)" id="${v.well_id}|${v.site_id}" class="btn btn-sm" style="background: #394f62;color: white;">${v.well_name}</a>`;
+                          let nonFlowingWells = `<a href="javascript:;" onclick="single_dashboard_details(this.id)" id="${v.well_id}|${v.site_id}" class="btn btn-danger">${v.well_name}</a>`;
                           let appendedContent = '';
 
                           if (!last_updated_time) {
@@ -763,9 +763,9 @@
                                   appendedContent = offlinewells;
                               }else if(timeDifference < 120){
                                   if (flag_status == 0){
-                                      appendedContent = nonFlowingWells;
-                                  }else if (flag_status == 1){
                                       appendedContent = flowingWells;
+                                  }else if (flag_status == 1){
+                                      appendedContent = nonFlowingWells;
                                   }
                               }
                           }
@@ -819,7 +819,7 @@
                       }
 
                       var map = new google.maps.Map(document.getElementById('mymap'), {
-                          zoom: 13,
+                          zoom: 11,
                           center: { lat: 21.6316586, lng: 72.994056 }
                       });
 
@@ -858,14 +858,14 @@
                               title: marker.title,
                               lat: marker.lat,
                               long: marker.long,
-                              site:marker.site
+                              site: marker.site
                           });
 
                           var statusText = '';
                           if (!marker.offline_time || seconds > 7200) {
                               statusText = 'Offline';
                           } else if (seconds <= 7200 && marker.flag_status == 0) {
-                              statusText = 'Flowing Well';
+                              statusText = 'Flowing';
                           } else if (seconds <= 7200 && marker.flag_status == 1) {
                               statusText = 'Non-Flowing';
                           }

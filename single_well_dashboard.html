@@ -415,23 +415,27 @@
                               <div class="col-lg-12">
                                 <div class="form-group">
                                   <label style="float: left;"><strong>From Date/Time</strong></label>
-                                  <input type="datetime-local" onchange="Get_Graph()" name="from_date" id="from_date" class="form-control">
+                                  <input type="datetime-local"  name="from_date" id="from_date" class="form-control">
                                 </div>
                               </div>
                               <div class="col-lg-12 pt-2">
                                 <div class="form-group">
                                   <label style="float: left;"><strong>To Date/Time</strong></label>
-                                  <input type="datetime-local" onchange="Get_Graph()" name="to_date" id="to_date" class="form-control">
+                                  <input type="datetime-local" name="to_date" id="to_date" class="form-control">
                                 </div>
                               </div>
-                              <!-- <div class="col-md-2 pt-2">
-                                <button class="btn btn-primary" onclick="Get_Graph()">Generate</button>
+                              <div class="row pb-3" style="width: 50px;text-align: center;display: flex;flex-flow: row;">
+                                <div class="col-lg-4 pt-2" style="padding-left: 0px;">
+                                    <button class="btn btn-secondary" onclick="Get_Graph()" type="button">
+                                      Genrate
+                                    </button>
+                                </div>
+                                <div class="col-lg-4 pt-2" style="padding-left: 60px;">
+                                    <button class="btn btn-info" onclick="graph_date_time()" type="button">
+                                      <i class="fa-solid fa-arrows-rotate"></i>
+                                    </button>
+                                </div>
                               </div>
-                              <div class="col-md-6 pt-2 pb-2" style="padding-left: 45%;margin-top: -38px;">
-                                <button onclick="graph_date_time();" type="button" class="btn btn-primary btn-sm rounded-5">
-                                  <i class="fa-solid fa-arrows-rotate"></i>
-                                </button>
-                              </div> -->
                             </div>
                         </div>
 
@@ -657,7 +661,7 @@
     <script src="assets/vendor/overlay-scroll/jquery.overlayScrollbars.min.js"></script>
     <script src="assets/vendor/overlay-scroll/custom-scrollbar.js"></script>
 
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyA-_rv9bXIPPVsYV0TQ5NxUMg96WdP9_LM"></script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBKoAgLoslTEUCNabLj5H5jLVdWFD2WhK8"></script>
     <!-- Custom JS files -->
     <script src="assets/js/custom.js"></script>
     <!-- <script src="inc/sidebarmenu.html"></script> -->
@@ -676,7 +680,7 @@
       let wellSiteata = JSON.parse(sessionwellSite);
       let session_well_id = wellSiteata.well_id;
       let session_site_id = wellSiteata.site_id;
-      // console.log("well_site",wellSiteata);
+      console.log("well_site",wellSiteata);
 
 
       let sessionUserData = localStorage.getItem('userData');
@@ -787,7 +791,7 @@
         $.ajax({
             url: api_path + "Well_master/Well_List",
             type: "POST",
-            data: {company_id:company_id,assets_id:assets_id,area_id:area_id,site_id:site_id},
+            data: {company_id:company_id,assets_id:assets_id,area_id:area_id,site_id:site_id,user_id: userData.user_member_id},
             headers: { 
                 "x-api-key": "Qm0Lkq9m8JRiGPxO56HNmD7pIVSGzJje"
             },
@@ -872,8 +876,10 @@
 
                       $('#on_time').text(deviceData.ON_Time || 0);
                       $('#off_time').text(deviceData.Off_Time || 0);
-                      $('#next_cycle').text(deviceData.TRGT_Time || 0);
-                      $('#last_cycle').text(deviceData.last_on_time || 0);
+                      let last_cycle_time = deviceData.last_cycle != null ? moment(deviceData.last_cycle).format('DD-MM-YYYY HH:mm a') :" ";
+                    $('#last_cycle').text(last_cycle_time);
+                    let next_cycle_time = deviceData.next_cycle != null ? moment(deviceData.next_cycle).format('DD-MM-YYYY HH:mm a') :" ";
+                    $('#next_cycle').text(next_cycle_time);
 
                       $('#bean_size').text(deviceData.bean_size || "W/B");
                     
@@ -989,7 +995,6 @@
       }
 
       const Get_Graph = ()=>{
-
           let selectedOption = "1";
           if(selectedOption == "1")
           {
