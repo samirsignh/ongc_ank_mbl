@@ -56,6 +56,15 @@
           font-weight: 700;
           padding: 0px 10px;
       }
+      .btn {
+         --bs-btn-padding-x: 0.25rem !important;
+       }
+       .change-pass{
+          color: blue;
+          font-weight: 500;
+          font-size: 14px;
+          text-align: center;
+       }
     </style>
   </head>
 
@@ -100,7 +109,8 @@
                 <h6 class="m-0" id="logedin_user"></h6>
               </div>
               <div class="mx-3 my-2 d-grid">
-                <a href="javascript:;" onclick="logoutSession()" class="btn btn-danger">Logout</a>
+                <a href="changes_password.html" class="change-pass">Change Password </a>
+                <a href="javascript:;" onclick="logoutSession()" class="btn btn-danger  mt-2">Logout</a>
               </div>
             </div>
           </div>
@@ -141,6 +151,9 @@
                   </li>
                   <li>
                     <a href="historical_graph.html">Historical Graph Report</a>
+                  </li>
+                  <li>
+                    <a href="sov_log_report.html">SOV Report</a>
                   </li>
                 </ul>
               </li>
@@ -267,7 +280,7 @@
                           </div>
                       </div>
                       <div class="well-status-badge">
-                        <strong>Well Status :</strong> <span class="badge rounded-pill bg-dark" id="well_status" style="letter-spacing: 1px;text-transform: uppercase;"></span>
+                        <strong>Well Status :</strong> <span class="badge rounded-pill bg-danger fs-20" id="well_status" style="letter-spacing: 1px;text-transform: uppercase;"></span>
                       </div>
                       <img class="pump-motor-image" src="assets/images/icons/11.jpg" alt="pump-img">
                     </div>
@@ -385,6 +398,7 @@
                         <a href="#" data-bs-toggle="offcanvas" data-bs-target="#flag_well" aria-controls="flag_well" class="btn btn-outline-primary"> Flag Well </a> -->
                         <a href="javascript:;" onclick="gotoLogReport('hostorical')" class="btn btn-outline-primary"> Historical Log </a>
                         <a href="javascript:;" onclick="gotoLogReport('alert')" class="btn btn-outline-primary"> Alert Log </a>
+                         <a href="javascript:;" onclick="gotoLogReport('sov')" class="btn btn-outline-primary"> SOV Log </a>
                       </div>
                     </div>
                   </div>
@@ -427,7 +441,7 @@
                               <div class="row pb-3" style="width: 50px;text-align: center;display: flex;flex-flow: row;">
                                 <div class="col-lg-4 pt-2" style="padding-left: 0px;">
                                     <button class="btn btn-secondary" onclick="Get_Graph()" type="button">
-                                      Genrate
+                                      Generate
                                     </button>
                                 </div>
                                 <div class="col-lg-4 pt-2" style="padding-left: 60px;">
@@ -680,20 +694,19 @@
       let wellSiteata = JSON.parse(sessionwellSite);
       let session_well_id = wellSiteata.well_id;
       let session_site_id = wellSiteata.site_id;
-      console.log("well_site",wellSiteata);
-
-
+    
       let sessionUserData = localStorage.getItem('userData');
       let userData = JSON.parse(sessionUserData);
 
       $(document).ready(function() {
           let company_id = userData.company_id;
           let assets_id = userData.assets_id;
+          let user_id = userData.user_member_id;
           // area list section
           $.ajax({
-              url: api_path + "Area_master/AreaList",
+              url: api_path + "Area_Dashboard/AreaList_forDashboard",
               type: "POST",
-              data:{company_id:company_id, assets_id:assets_id},
+              data:{company_id:company_id, assets_id:assets_id,user_id:user_id},
               headers: { 
                   "x-api-key": "Qm0Lkq9m8JRiGPxO56HNmD7pIVSGzJje"
               },
@@ -733,11 +746,12 @@
         let company_id = userData.company_id;
         let assets_id = userData.assets_id;
         let area_id = $("#area_id").val();
+        let user_id = userData.user_member_id;
 
         $.ajax({
-            url: api_path + "Well_site_master/Well_SiteList",
+            url: api_path + "Area_Dashboard/SiteList_forDashboard",
             type: "POST",
-            data: {company_id:company_id,assets_id:assets_id,area_id:area_id},
+            data: {company_id:company_id,assets_id:assets_id,area_id:area_id,user_id:user_id},
             headers: { 
                 "x-api-key": "Qm0Lkq9m8JRiGPxO56HNmD7pIVSGzJje"
             },
@@ -787,21 +801,23 @@
         let assets_id = userData.assets_id;
         let area_id = $("#area_id").val();
         let site_id = $("#site_id").val();
+        let user_id = userData.user_member_id;
 
         $.ajax({
-            url: api_path + "Well_master/Well_List",
+            url: api_path + "Area_Dashboard/WellList_forDashboard",
             type: "POST",
-            data: {company_id:company_id,assets_id:assets_id,area_id:area_id,site_id:site_id,user_id: userData.user_member_id},
+            data: {company_id:company_id,assets_id:assets_id,area_id:area_id,site_id:site_id,user_id:user_id},
             headers: { 
                 "x-api-key": "Qm0Lkq9m8JRiGPxO56HNmD7pIVSGzJje"
             },
             success:(resp)=>{
+              
               if(resp.response_code == 200){
                 $("#well_id").html(`<option value="">-select-</option>`);
                 $.each(resp.data, (i,v)=>{
-                    let selected = v.id == session_well_id ? "selected" : "";
+                    let selected = v.well_id == session_well_id ? "selected" : "";
                     $("#well_id").append(
-                        `<option value="${v.id}" ${selected}>${v.well_name}</option>`
+                        `<option value="${v.well_id}" ${selected}>${v.well_name}</option>`
                     );
                 });
               }
@@ -1067,75 +1083,82 @@
                   fontColor: "dimGrey",
                   itemclick: toggleDataSeries,
               },
-              data: [
-                  {
-                      type: "line",
-                      xValueType: "dateTime",
-                      xValueFormatString: "DD-MM-YYYY HH:mm:ss",
-                      showInLegend: true,
-                      name: name1,
-                      dataPoints: dataPoints1,
-                      lineColor: "#3a1397",
-                      legendMarkerColor: "#3a1397",
-                      markerColor: "#3a1397",
-                  },
-                  {
-                      type: "line",
-                      xValueType: "dateTime",
-                      xValueFormatString: "DD-MM-YYYY HH:mm:ss",
-                      showInLegend: true,
-                      name: name2,
-                      dataPoints: dataPoints2,
-                      lineColor: "#ec344c",
-                      legendMarkerColor: "#ec344c",
-                      markerColor: "#ec344c",
-                  },
-                  {
-                      type: "line",
-                      xValueType: "dateTime",
-                      xValueFormatString: "DD-MM-YYYY HH:mm:ss",
-                      showInLegend: true,
-                      name: name3,
-                      dataPoints: dataPoints3,
-                      lineColor: "#b55705",
-                      legendMarkerColor: "#b55705",
-                      markerColor: "#b55705",
-                  },
-                  {
-                      type: "line",
-                      xValueType: "dateTime",
-                      xValueFormatString: "DD-MM-YYYY HH:mm:ss",
-                      showInLegend: true,
-                      name: name4,
-                      dataPoints: dataPoints4,
-                      lineColor: "#3add58",
-                      legendMarkerColor: "#3add58",
-                      markerColor: "#3add58",
-                  },
+              data: [{
+                    type: "line",
+                    xValueType: "dateTime",
+                    xValueFormatString: "DD-MM-YYYY HH:mm:ss",
+                    showInLegend: true,
+                    name: name1,
+                    dataPoints: dataPoints1,
+                    lineColor: '#ec344c',
+                    color:'#ec344c',
+                    legendMarkerColor: '#ec344c',
+                    markerColor:'#ec344c'
 
-                  {
-                      type: "line",
-                      xValueType: "dateTime",
-                      xValueFormatString: "DD-MM-YYYY HH:mm:ss",
-                      showInLegend: true,
-                      name: name5,
-                      dataPoints: dataPoints5,
-                      lineColor: "#c72c12b8",
-                      legendMarkerColor: "#c72c12b8",
-                      markerColor: "#c72c12b8",
-                  },
-                  {
-                      type: "line",
-                      xValueType: "dateTime",
-                      xValueFormatString: "DD-MM-YYYY HH:mm:ss",
-                      showInLegend: true,
-                      name: name6,
-                      dataPoints: dataPoints6,
-                      lineColor: "#2786f1",
-                      legendMarkerColor: "#2786f1",
-                      markerColor: "#2786f1",
-                  },
-              ],
+                },
+                {
+                    type: "line",
+                    xValueType: "dateTime",
+                    xValueFormatString: "DD-MM-YYYY HH:mm:ss",
+                    showInLegend: true,
+                    name: name2,
+                    dataPoints: dataPoints2,
+                    lineColor: '#f59440',
+                    color:'#f59440',
+                    legendMarkerColor: '#f59440',
+                    markerColor:'#f59440'
+                },
+                {
+                    type: "line",
+                    xValueType: "dateTime",
+                    xValueFormatString: "DD-MM-YYYY HH:mm:ss",
+                    showInLegend: true,
+                    name: name3,
+                    dataPoints: dataPoints3,
+                    lineColor: '#287f71e0',
+                    legendMarkerColor: '#287f71e0',
+                    color:'#287f71e0',
+                    markerColor:'#287f71e0'
+                },
+                {
+                    type: "line",
+                    xValueType: "dateTime",
+                    xValueFormatString: "DD-MM-YYYY HH:mm:ss",
+                    showInLegend: true,
+                    name: name4,
+                    dataPoints: dataPoints4,
+                    lineColor: '#402fd4',
+                    legendMarkerColor: '#402fd4',
+                    color:'#402fd4',
+                    markerColor:'#402fd4'
+                },
+
+                {
+                    type: "line",
+                    xValueType: "dateTime",
+                    xValueFormatString: "DD-MM-YYYY HH:mm:ss",
+                    showInLegend: true,
+                    name: name5,
+                    dataPoints: dataPoints5,
+                    lineColor: '#2786f1',
+                    legendMarkerColor: '#2786f1',
+                    markerColor:'#2786f1',
+                    color:'#2786f1'
+                },
+                {
+                    type: "line",
+                    xValueType: "dateTime",
+                    xValueFormatString: "DD-MM-YYYY HH:mm:ss",
+                    showInLegend: true,
+                    name: name6,
+                    dataPoints: dataPoints6,
+                    lineColor: '#dd33ff',
+                    legendMarkerColor: '#dd33ff',
+                    markerColor:'#dd33ff',
+                    color:'#dd33ff'
+                   
+                }
+            ]
           });
           chart.options.data[0].visible = true;
           chart.options.data[1].visible = true;
@@ -1428,7 +1451,7 @@
 
                       markers.forEach(function (marker) {
                           var markerIcon = {
-                              url: 'assets/images/red.png', 
+                              url: 'assets/images/offline.png', 
                               scaledSize: new google.maps.Size(20, 20)
                           };
 
@@ -1443,7 +1466,7 @@
                           }
 
                           if (!marker.offline_time || seconds > 7200) {
-                              markerIcon.url = 'assets/images/red.png'; 
+                              markerIcon.url = 'assets/images/offline.png'; 
                           } else if (seconds <= 7200 && marker.flag_status == 0) {
                               markerIcon.url = 'assets/images/green.png'; 
                           } else if (seconds <= 7200 && marker.flag_status == 1) {
@@ -1508,6 +1531,14 @@
           };
           localStorage.setItem('alertSessionIds',JSON.stringify(alertSession));
           window.location.href = 'alert_log_report.html';
+        }else if(logType == "sov"){
+          let sovSession = [];
+          sovSession = {
+            well_id: well_id,
+            well_type: well_type,
+          };
+          localStorage.setItem('sovSessionIds',JSON.stringify(sovSession));
+          window.location.href = 'sov_log_report.html';
         }
       }
 

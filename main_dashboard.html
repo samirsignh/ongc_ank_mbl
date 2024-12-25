@@ -61,6 +61,15 @@
       .icon-box{
         box-shadow: inset 1.5px 1.5px 0px rgb(255 255 255 / 0%), inset -1.5px -1.5px 0px rgba(0, 0, 0, .1);
       }
+      .btn {
+         --bs-btn-padding-x: 0.25rem !important;
+       }
+       .change-pass{
+          color: blue;
+          font-weight: 500;
+          font-size: 14px;
+          text-align: center;
+       }
     </style>
 
     <!-- *************
@@ -112,7 +121,10 @@
                 <h6 class="m-0" id="logedin_user"></h6>
               </div>
               <div class="mx-3 my-2 d-grid">
-                <a href="javascript:;" onclick="logoutSession()" class="btn btn-danger">Logout</a>
+                <a href="changes_password.html" class="change-pass">Change Password </a>
+                <a href="javascript:;" onclick="logoutSession()" class="btn btn-danger  mt-2">Logout</a>
+
+
               </div>
             </div>
           </div>
@@ -154,6 +166,9 @@
                   <li>
                     <a href="historical_graph.html">Historical Graph Report</a>
                   </li>
+                  <li>
+                    <a href="sov_log_report.html">SOV Report</a>
+                  </li>
                 </ul>
               </li>
             </ul>
@@ -172,7 +187,7 @@
             <ol class="breadcrumb">
               <li class="breadcrumb-item">
                 <i class="ri-home-8-line lh-1 pe-3 me-3 border-end"></i>
-                <a href="#">Home</a>
+                <a href="main_dashboard.html">Home</a>
               </li>
               <li class="breadcrumb-item text-primary" aria-current="page">
                 Dashboard
@@ -801,6 +816,7 @@ console.log('userSessionData',userData);
                   "x-api-key": "Qm0Lkq9m8JRiGPxO56HNmD7pIVSGzJje"
               },
               success:(resp)=>{
+                console.log(resp,'map_details');
 
                   if(resp.response_code == 200){
                     if(resp.data.length > 0){
@@ -814,7 +830,7 @@ console.log('userSessionData',userData);
                               flag_status: item.flag_status,
                               long: item.long,
                               lat: item.lat,
-                              site:item.site_id
+                              site_id:item.site_id
                           });
                       }
 
@@ -824,41 +840,44 @@ console.log('userSessionData',userData);
                       });
 
 
-                      markers.forEach(function (marker) {
+                      markers.forEach(function (marker, index) { // Add 'index' as a parameter
                           var markerIcon = {
-                              url: 'assets/images/red.png', 
+                              url: 'assets/images/offline.png', 
                               scaledSize: new google.maps.Size(20, 20)
                           };
 
                           var seconds = 200;
 
                           if (marker.offline_time) {
-                             
                               var lastDataTimeObj = new Date(marker.offline_time);
                               var currentDate = new Date();
-
                               var diffInMilliseconds = currentDate - lastDataTimeObj;
                               seconds = Math.floor(diffInMilliseconds / 1000);
                           }
 
                           if (!marker.offline_time || seconds > 7200) {
-                              markerIcon.url = 'assets/images/red.png'; 
+                              markerIcon.url = 'assets/images/offline.png'; 
                           } else if (seconds <= 7200 && marker.flag_status == 0) {
-                            
                               markerIcon.url = 'assets/images/green.png'; 
                           } else if (seconds <= 7200 && marker.flag_status == 1) {
-                              
-                              markerIcon.url = 'assets/images/orange.png'; 
+                              markerIcon.url = 'assets/images/red.png'; 
                           }
 
+                          // Add a slight offset to overlapping markers
+                          var offset = index * 0.0001; // Use the 'index' here
+                          var adjustedPosition = {
+                              lat: parseFloat(marker.lat) + offset,
+                              lng: parseFloat(marker.long) + offset
+                          };
+
                           var mapMarker = new google.maps.Marker({
-                              position: marker.position,
+                              position: adjustedPosition, // Use the adjusted position
                               map: map,
                               icon: markerIcon,
                               title: marker.title,
                               lat: marker.lat,
                               long: marker.long,
-                              site: marker.site
+                              site_id: marker.site_id
                           });
 
                           var statusText = '';
@@ -870,18 +889,17 @@ console.log('userSessionData',userData);
                               statusText = 'Non-Flowing';
                           }
 
-                        
                           var infowindow = new google.maps.InfoWindow({
                               content:
                                   '<div class="site-info" style="width: 150px; height: auto;">' +
                                   '<h6 style="color:black;"><a target="_blank" href="https://www.google.com/maps/place/' + marker.lat + ',' + marker.long + '" style="color:blue;">View on Google Maps</a></h6>' +
                                   '<h6>' + marker.title + '</h6>' +
                                   '<h6><b>Well Status</b>: ' + statusText + '</h6>' +
-                                  '<h6><b><a onclick="single_dashboard_details(this.id)" id="'+marker.well_id+' | '+marker.site+'" href="javascript:;" style="color: blue;">View Details</a></b></h6>' +
+                                  '<h6><b><a onclick="single_dashboard_details(this.id)" id="'+marker.well_id+'|'+marker.site_id+'" href="javascript:;" style="color: blue;">View Details</a></b></h6>' +
                                   '</div>'
                           });
 
-                          // Marker click listener
+                          // Marker click listeners
                           mapMarker.addListener('click', function () {
                               infowindow.open(map, mapMarker);
                           });
@@ -891,6 +909,7 @@ console.log('userSessionData',userData);
                               infowindow.close();
                           });
                       });
+
 
                     }
                   }

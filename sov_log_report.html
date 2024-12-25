@@ -175,7 +175,7 @@
                 Single Dashboard
               </li>
               <li class="breadcrumb-item text-primary" aria-current="page">
-                Alert Log Report
+                SOV Log Report
               </li>
             </ol>
             <!-- Breadcrumb ends -->
@@ -191,8 +191,7 @@
               <div class="col-xl-12">
                 <div class="card mb-3">
                   <div class="card-header">
-                    <h5 class="card-title" style="font-family: sans-serif;font-weight: 700;">
-                     Alert Log Report
+                    <h5 class="card-title" style="font-family: sans-serif;font-weight: 700;">SOV Log Report
                       <a href="main_dashboard.html" class="btn btn-sm btn-primary" style="float: right;">Back</a>
                     </h5>
                   </div>
@@ -202,7 +201,7 @@
                         <div class="col-md-12">
                           <div class="form-group">
                             <label><strong>Well Type</strong></label>
-                            <select class="form-select select2" onchange="getWellNameList(); get_alert_log_report()" name="well_type" id="well_type">
+                            <select class="form-select select2" onchange="getWellNameList(); get_sov_report()" name="well_type" id="well_type">
                               
                             </select>
                           </div>
@@ -210,43 +209,23 @@
                         <div class="col-md-12 pt-1">
                           <div class="form-group">
                             <label><strong>Well Name</strong></label>
-                            <select class="form-control select2" onchange="get_alert_log_report()" name="well_id" id="well_id">
+                            <select class="form-control select2" onchange="get_sov_report()" name="well_id" id="well_id">
                               
                             </select>
                           </div>
                         </div>
                         <div class="col-md-12 pt-1">
-                          <div class="form-group">
-                            <label><strong>Alert Type</strong></label>
-                            <select class="form-control select2" onchange="get_alert_log_report()" name="alert_type" id="alert_type">
-                              <option value="">-select-</option>
-                              <option value="0">SOV ON</option>
-                              <option value="1">SOV Off</option>
-                              <option value="2">Battery Low</option>
-                              <option value="3">Battery High</option>
-                              <option value="4">GIP Low</option>
-                              <option value="5">GIP High</option>
-                              <option value="6">THP Low</option>
-                              <option value="7">THP High</option>
-                              <option value="8">CHP Low</option>
-                              <option value="9">CHP Low</option>
-                              <option value="10">ABP Low</option>
-                              <option value="11">ABP High</option>
-                              <option value="12">Temp Low</option>
-                              <option value="13">Temp High</option>
-                            </select>
-                          </div>
-                        </div>
+                          
                         <div class="col-md-12 pt-1">
                           <div class="form-group">
                             <label><strong>From Date</strong></label>
-                            <input type="date" onchange="get_alert_log_report(); get_installation_date()" name="from_date" id="from_date" class="form-control">
+                            <input type="date" onchange="get_sov_report(); get_installation_date()" name="from_date" id="from_date" class="form-control">
                           </div>
                         </div>
                         <div class="col-md-12 pt-1">
                           <div class="form-group">
                             <label><strong>To Date</strong></label>
-                            <input type="date" onchange="get_alert_log_report(); get_installation_date();" name="to_date" id="to_date" class="form-control">
+                            <input type="date" onchange="get_sov_report(); get_installation_date();" name="to_date" id="to_date" class="form-control">
                           </div>
                         </div>
                       </div>
@@ -269,18 +248,19 @@
                               <th class="pb-0" colspan="8"><h5 class="text-center" style="font-size: 17px !important;">IOT Based Real Time Well Monitoring System ONGC,Ankleshwar Asset</h5></th>
                             </tr>
                             <tr>
-                              <th colspan="8"><h6 class="text-center">Alert Log Report as on <span id="report_from_date"></span> To <span id="report_to_date"></span></h6></th>
+                              <th colspan="8"><h6 class="text-center">SOV Log Report as on <span id="report_from_date"></span> To <span id="report_to_date"></span></h6></th>
                             </tr>
                             <tr>
                               <th>#</th>
                               <th>Site Name</th>
+                              <th>Well Type</th>
                               <th>Well Name</th>
-                              <th>Alert Type</th>
-                              <th>Alert Details</th>
-                              <th>Alert D/T</th>
+                              <th>Start Date Time</th>
+                              <th>End Date Time</th>
+                              <th>Total Running Hours</th>
                             </tr>
                           </thead>
-                          <tbody id="alert_log_report_table">
+                          <tbody id="table_data">
                             
                           </tbody>
                         </table>
@@ -338,12 +318,12 @@
       let sessionUserData = localStorage.getItem('userData');
       let userData = JSON.parse(sessionUserData);
 
-      let alertLog_id = localStorage.getItem('alertSessionIds');
-      let alertData = JSON.parse(alertLog_id);
+      let sovLogId = localStorage.getItem('sovSessionIds');
+      let sovData = JSON.parse(sovLogId);
 
-      let wellTypeId = alertData?.well_type || null;
-        let wellId = alertData?.well_id || null;
-
+      let wellTypeId = sovData?.well_type || null;
+        let wellId = sovData?.well_id || null;
+      
       $(document).ready(function(){
         $(".select2").select2();
       });
@@ -382,7 +362,7 @@
                       let selected = v.id == wellTypeId ? "selected" : "";
                       $("#well_type").append(`<option value="${v.id}" ${selected}>${v.well_type_name}</option>`);
                   });
-                  get_alert_log_report();
+                  get_sov_report();
                 }else{
                   $("#well_type").html(`<option value="">-select-</option>`)
                 }
@@ -412,7 +392,7 @@
                       let selected = v.well_id == wellId ? "selected" : "";
                       $("#well_id").append(`<option value="${v.well_id}" ${selected}>${v.well_name}</option>`);
                   });
-                  get_alert_log_report();
+                  get_sov_report();
                 }else{
                   $("#well_id").html(`<option value="">-select-</option>`)
                 }
@@ -454,17 +434,16 @@
 
       }
 
-      const get_alert_log_report = ()=>{
-        $("#alert_log_report_table").html(`<tr><td colspan="8" style="text-align:center;color:grey;"> Please wait.....loading!</td></tr>`);
+      const get_sov_report = ()=>{
+        $("#table_data").html(`<tr><td colspan="8" style="text-align:center;color:grey;"> Please wait.....loading!</td></tr>`);
         $.ajax({
-            url: api_path + "Report/Alert_Report",
+            url: api_path + "Report/Sov_Report",
             type: "POST",
             data: {
                 company_id: userData.company_id,
                 user_id: userData.user_member_id,
                 well_type: $("#well_type").val(),
                 well_id: $("#well_id").val(),
-                alert_type: $("#alert_type").val(),
                 from_date: $("#from_date").val(),
                 to_date: $("#to_date").val(),
             },
@@ -474,75 +453,53 @@
             success:(resp)=>{
               if(resp.response_code == 200){
                 if(resp.data.length > 0){
-                  $("#alert_log_report_table").html(``);
+                  $("#table_data").html(``);
+                  let total_running_minute = 0;
                   $.each(resp.data, (i,v)=>{
-                      var alert_data = '';
-                      var alert_type = v.alert_type;
-                      if (alert_type == 0) 
-                      {
-                          alert_data = 'SOV ON';
-                      } else if (alert_type == 1) 
-                      {
-                          alert_data = 'SOV OFF';
-                      } else if (alert_type == 2) 
-                      {
-                          alert_data = 'Battery Low';
-                      } else if (alert_type == 3) 
-                      {
-                          alert_data = 'Battery High';
-                      } else if (alert_type == 4) 
-                      {
-                          alert_data = 'GIP Low';
-                      } else if (alert_type == 5) 
-                      {
-                          alert_data = 'GIP High';
-                      } else if (alert_type == 6) 
-                      {
-                          alert_data = 'THP Low';
-                      } else if (alert_type == 7) 
-                      {
-                          alert_data = 'THP High';
-                      } else if (alert_type == 8) 
-                      {
-                          alert_data = 'CHP Low';
-                      } else if (alert_type == 9) 
-                      {
-                          alert_data = 'CHP High';
-                      } else if (alert_type == 10) 
-                      {
-                          alert_data = 'ABP Low';
-                      } else if (alert_type == 11) 
-                      {
-                          alert_data = 'ABP High';
-                      } else if (alert_type == 12) 
-                      {
-                          alert_data = 'Temp Low';
-                      } else if (alert_type == 13) 
-                      {
-                          alert_data = 'Temp High';
-                      } else {
-                          alert_data = 'Unknown Alert Type';
-                      }
-                      var alerts_details = v.alert_details != null ? v.alert_details :"NA";
-                      var start_date_time  = v.alert_date_time != null ? moment(v.alert_date_time).format('DD-MM-YYYY h:mm:ss a') :"NA";
 
-                      $("#alert_log_report_table").append(`<tr>
+                    var running_hrs = parseInt(v.total_minutes);
+                        var R_hours = Math.floor(running_hrs / 60);
+                        var R_minutes = running_hrs % 60;
+                        var Running_Time = R_hours + ' Hrs ' + R_minutes + ' Min';
+
+                        total_running_minute += parseInt(v.total_minutes); 
+                      
+                      var start_date_time  = v.start_date_time != null ? moment(v.start_date_time).format('DD-MM-YYYY h:mm:ss a') :"NA";
+                      var end_date_time  = v.end_date_time != null ? moment(v.end_date_time).format('DD-MM-YYYY h:mm:ss a') :"NA";
+                      $("#table_data").append(`<tr>
                                 <td>${i + 1}</td>
                                 <td>${v.well_site_name}</td>
+                                <td>${v.well_type_name}</td>
                                 <td>${v.well_name}</td>
-                                <td>${alert_data}</td>
-                                <td>${alerts_details}</td>
                                 <td>${start_date_time}</td>
+                                <td>${end_date_time}</td>
+                                <td>${Running_Time}</td>
                               </tr>`);
+
+                      
                   });
+                  var TR_hours = Math.floor(total_running_minute / 60);
+                      var TR_minutes = total_running_minute % 60;
+                      var Total_Running_Time = TR_hours + ' Hrs ' + TR_minutes + ' Min';
+
+
+                       $("#table_data").append(`<tr>
+                        <td colspan="6"style="text-align:right;"><b>Total</b></td>
+                        <td><b>${Total_Running_Time}</b></td>
+                        </tr>`);
                 }else{
-                  $("#alert_log_report_table").html(`<tr><td colspan="8" style="text-align:center;color:red;"> No record found!</td></tr>`);
+                  $("#table_data").html(`<tr><td colspan="8" style="text-align:center;color:red;"> No record found!</td></tr>`);
                 }
               }
             }
         });
       }
 
+      graph_date_time();
+      get_well_type_list();
+      get_installation_date();
+      get_sov_report();
+      
       $(document).ready(function() {
         let sessionUserData = localStorage.getItem('userData');
         let userData = JSON.parse(sessionUserData);
@@ -554,16 +511,10 @@
           $("#logedin_user").html(userData.user_full_name);
         }
       });
-
       const logoutSession = ()=>{
         localStorage.clear()
         window.location.href = 'login.html';
       }
-
-      graph_date_time();
-      get_well_type_list();
-      get_installation_date();
-      get_alert_log_report();
     </script>
 
   </body>

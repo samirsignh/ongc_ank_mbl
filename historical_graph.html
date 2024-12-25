@@ -52,6 +52,15 @@
         top: 5px;
         right: 8px;
       }
+      .btn {
+         --bs-btn-padding-x: 0.25rem !important;
+       }
+       .change-pass{
+          color: blue;
+          font-weight: 500;
+          font-size: 14px;
+          text-align: center;
+       }
     </style>
 
   </head>
@@ -97,7 +106,8 @@
                 <h6 class="m-0" id="logedin_user"></h6>
               </div>
               <div class="mx-3 my-2 d-grid">
-                <a href="javascript:;" onclick="logoutSession()" class="btn btn-danger">Logout</a>
+                <a href="changes_password.html" class="change-pass">Change Password </a>
+                <a href="javascript:;" onclick="logoutSession()" class="btn btn-danger  mt-2">Logout</a>
               </div>
             </div>
           </div>
@@ -130,14 +140,18 @@
                   <span class="menu-text">Reports</span>
                 </a>
                 <ul class="treeview-menu">
+
                   <li>
-                    <a href="historical_log.html">Historical </a>
+                    <a href="alert_log_report.html">Alert Log Report</a>
                   </li>
                   <li>
-                    <a href="alert_log_report.html">Historical Log Report</a>
+                    <a href="historical_log.html">Historical Report</a>
                   </li>
                   <li>
                     <a href="historical_graph.html">Historical Graph Report</a>
+                  </li>
+                  <li>
+                    <a href="sov_log_report.html">SOV Report</a>
                   </li>
                 </ul>
               </li>
@@ -180,7 +194,7 @@
                 <div class="card mb-3">
                   <div class="card-header" style="margin-bottom: -25px;">
                     <h5 class="card-title" style="font-family: sans-serif;font-weight: 700;">
-                     Historical Report
+                     Historical Graph
                      <a href="main_dashboard.html" class="btn btn-sm btn-primary" style="float: right;">Back</a>
                     </h5>
                   </div>
@@ -207,7 +221,6 @@
                           <div class="form-group">
                             <label><strong>Report Type</strong></label>
                             <select class="form-control select2" onchange="GetGraph()" name="report_type" id="report_type">
-                              <option value="">-select-</option>
                               <option value="1">CHP</option>
                               <option value="2">THP</option>
                               <option value="3">ABP</option>
@@ -305,7 +318,7 @@
             type: "POST",
             data: {
                 company_id: userData.company_id,
-                user_id: userData.user_id,
+               
             },
             headers: {
                 "x-api-key": "Qm0Lkq9m8JRiGPxO56HNmD7pIVSGzJje"
@@ -320,19 +333,19 @@
                 }else{
                   $("#well_type").html(`<option value="">-select-</option>`)
                 }
+                getWellName_list();
               }
             }
         });
 
       });
-
       const getWellName_list = ()=>{
         $.ajax({
             url: api_path + "Area_Dashboard/WellList_forDashboard",
             type: "POST",
             data: {
                 company_id: userData.company_id,
-                user_id: userData.user_id,
+                user_id: userData.user_member_id,
                 well_type: $("#well_type").val(),
             },
             headers: {
@@ -418,7 +431,7 @@
     var from_date = $('#from_date').val();
     var to_date = $('#to_date').val();
     var well_ids_json = JSON.stringify(well_ids);
-    console.log(well_ids_json,'well_ids_json');
+    // console.log(well_ids_json,'well_ids_json');
     var url = '';
     var selectedText = ''; 
     switch (selectedOption) {

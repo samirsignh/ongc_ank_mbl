@@ -46,6 +46,15 @@
         padding-right: 8px;
         color: saddlebrown;
       }
+      .btn {
+         --bs-btn-padding-x: 0.25rem !important;
+       }
+       .change-pass{
+          color: blue;
+          font-weight: 500;
+          font-size: 14px;
+          text-align: center;
+       }
     </style>
 
   </head>
@@ -91,7 +100,8 @@
                 <h6 class="m-0" id="logedin_user"></h6>
               </div>
               <div class="mx-3 my-2 d-grid">
-                <a href="javascript:;" onclick="logoutSession()" class="btn btn-danger">Logout</a>
+                <a href="changes_password.html" class="change-pass">Change Password </a>
+                <a href="javascript:;" onclick="logoutSession()" class="btn btn-danger  mt-2">Logout</a>
               </div>
             </div>
           </div>
@@ -132,6 +142,9 @@
                   </li>
                   <li>
                     <a href="historical_graph.html">Historical Graph Report</a>
+                  </li>
+                  <li>
+                    <a href="sov_log_report.html">SOV Report</a>
                   </li>
                 </ul>
               </li>

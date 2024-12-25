@@ -51,6 +51,15 @@
         top: 5px;
         right: 8px;
       }
+      .btn {
+         --bs-btn-padding-x: 0.25rem !important;
+       }
+       .change-pass{
+          color: blue;
+          font-weight: 500;
+          font-size: 14px;
+          text-align: center;
+       }
     </style>
 
   </head>
@@ -96,7 +105,8 @@
                 <h6 class="m-0" id="logedin_user"></h6>
               </div>
               <div class="mx-3 my-2 d-grid">
-                <a href="javascript:;" onclick="logoutSession()" class="btn btn-danger">Logout</a>
+                <a href="changes_password.html" class="change-pass">Change Password </a>
+                <a href="javascript:;" onclick="logoutSession()" class="btn btn-danger  mt-2">Logout</a>
               </div>
             </div>
           </div>
@@ -130,13 +140,16 @@
                 </a>
                 <ul class="treeview-menu">
                   <li>
-                    <a href="historical_log.html">Historical Reports</a>
-                  </li>
-                  <li>
                     <a href="alert_log_report.html">Alert Report</a>
                   </li>
                   <li>
+                    <a href="historical_log.html">Historical Report</a>
+                  </li>
+                  <li>
                     <a href="historical_graph.html">Historical Graph Report</a>
+                  </li>
+                  <li>
+                    <a href="sov_log_report.html">SOV Report</a>
                   </li>
                 </ul>
               </li>
@@ -189,7 +202,7 @@
                         <div class="col-md-12 pt-1">
                           <div class="form-group">
                             <label><strong>Well Name</strong></label>
-                            <select class="form-control select2" onchange="get_historical_report_list()" name="well_id" id="well_id">
+                            <select class="form-control select2" onchange="get_historical_report_list();get_installation_date();" name="well_id" id="well_id">
                               
                             </select>
                           </div>
@@ -226,12 +239,10 @@
                               <th class="pb-0" colspan="15"><h5 class="text-center" style="font-size: 17px !important;">IOT Based Real Time Well Monitoring System ONGC,Ankleshwar Asset</h5></th>
                             </tr>
                             <tr>
-                              <th colspan="15"><h6 class="text-center">Device Historical Report as on <span id="report_from_date"></span> To <span id="report_to_date"></span></h6></th>
+                              <th colspan="15"><h6 class="text-center">Device Historical Report of <span id="selectedWellName" style="font-size:16px;"></span> <span id="report_from_date"></span> To <span id="report_to_date"></span></h6></th>
                             </tr>
                             <tr>
                               <th>#</th>
-                              <th>Well Name</th>
-                              <th>IMEI No</th>
                               <th>Last Log D/T</th>
                               <th>GIP</th>
                               <th>CHP</th>
@@ -239,7 +250,6 @@
                               <th>ABP</th>
                               <th>THT</th>
                               <th>Battery(V)</th>
-                              <th>SF1-solenide</th>
                               <th>Target Time</th>
                               <th>On Time</th>
                               <th>OFf Time</th>
@@ -313,7 +323,7 @@
             type: "POST",
             data: {
                 company_id: userData.company_id,
-                user_id: userData.user_id,
+                user_id: userData.user_member_id,
             },
             headers: {
                 "x-api-key": "Qm0Lkq9m8JRiGPxO56HNmD7pIVSGzJje"
@@ -321,16 +331,17 @@
             success:(resp)=>{
               if(resp.response_code == 200){
                 if(resp.data.length > 0){
-                  $("#well_id").html(`<option value="">-select-</option>`);
+                  // $("#well_id").html(`<option value="">-select-</option>`);
                   $.each(resp.data, (i,v)=>{
                       let selected = v.well_id == historical_well_id ? "selected" : "";
                       $("#well_id").append(`<option value="${v.well_id}" ${selected}>${v.well_name}</option>`);
                   });
+                  get_historical_report_list();
                 }else{
                   $("#well_id").html(`<option value="">-select-</option>`)
                 }
               }
-              get_historical_report_list();
+              
             }
         });
 
@@ -351,11 +362,15 @@
           document.getElementById('from_date').value = fromDateValue;
           document.getElementById('to_date').value = toDateValue;
       }
-
+      get_installation_date();
       function get_installation_date()
       {
           var from_date = $('#from_date').val();
           var to_date = $('#to_date').val();
+          var well_id = $('#well_id').val();
+          var selectedWellName = $('#well_id option:selected').text();
+          // alert(selectedWellName);
+          $('#selectedWellName').html(selectedWellName);
 
           f_from_date = moment(from_date);
           t_to_date = moment(to_date);
@@ -400,6 +415,7 @@
                 "x-api-key": "Qm0Lkq9m8JRiGPxO56HNmD7pIVSGzJje"
             },
             success:(resp)=>{
+              // console.log(resp,'historical')
               if(resp.response_code == 200){
                 if(resp.data.length > 0){
                   $("#historical_log_report_table").html(``);
@@ -407,8 +423,7 @@
                       var lastDateTime  = v.Log_Date_Time != null ? moment(v.Log_Date_Time).format('DD-MM-YYYY h:mm:ss a') :"-";
                       $("#historical_log_report_table").append(`<tr style="font-size: 11px;">
                               <td>${i + 1}</td>
-                              <td>${v.well_name ? v.well_name : "-"}</td>
-                              <td>${v.imei_no ? v.imei_no : "-"}</td>
+                             
                               <td style="min-width: 135px;">${lastDateTime}</td>
                               <td>${v.PS_1_GIP ? v.PS_1_GIP : "-"}</td>
                               <td>${v.PS_2_CHP ? v.PS_2_CHP : "-"}</td>
@@ -416,7 +431,6 @@
                               <td>${v.PS_4_ABP ? v.PS_4_ABP : "-"}</td>
                               <td>${v.FLTP_1_Temp ? v.FLTP_1_Temp : "-"}</td>
                               <td>${v.Battery_Voltage ? v.Battery_Voltage : "-"}</td>
-                              <td>${v.SF_1_solenide ? v.SF_1_solenide : "-"}</td>
                               <td>${v.TRGT_Time ? v.TRGT_Time : "-"}</td>
                               <td>${v.ON_Time ? v.ON_Time : "-"}</td>
                               <td>${v.Off_Time ? v.Off_Time : "-"}</td>
